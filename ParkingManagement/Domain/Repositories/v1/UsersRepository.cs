@@ -45,7 +45,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         public async Task<BaseResponse<User>> AddUserAsync(User UserToAdded)
         {
             if (UserToAdded == null) return new BaseResponse<User>("", StatusCodes.Status400BadRequest);
-            User UserEntity = await GetContext().User.SingleOrDefaultAsync(i => i.Id == UserToAdded.Id).ConfigureAwait(false);
+            User UserEntity = await GetContext().User.FirstOrDefaultAsync(i => i.Id == UserToAdded.Id).ConfigureAwait(false);
             if (UserEntity != null)
                 return new BaseResponse<User>("", StatusCodes.Status409Conflict);
 

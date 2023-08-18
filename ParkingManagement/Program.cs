@@ -21,7 +21,7 @@ internal class Program
 
         var optionsBuilder = new DbContextOptionsBuilder<ParkingManagementDBContext>();
 
-        string connection = "dev-shop-01-sql.database.windows.net; Database = TestCm; User Id = LisecAdmin; Password = evenly-2PNPSKFX7;";
+        string connection = "Server = dev-shop-01-sql.database.windows.net; Database = TestCm; User Id = LisecAdmin; Password = evenly-2PNPSKFX7;";
         optionsBuilder.UseSqlServer(connection);
         builder.Services.AddDbContext<ParkingManagementDBContext>(provider => new ParkingManagementDBContext(optionsBuilder.Options));
         builder.Services.AddScoped<UsersService>();

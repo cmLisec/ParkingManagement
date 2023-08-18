@@ -9,7 +9,10 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// Constructor for BaseRepository class.
         /// </summary>
         /// <param name="context">Specifies the  db context.</param>
-        protected BaseRepository(ParkingManagementDBContext context)  { }
+        protected BaseRepository(ParkingManagementDBContext context)  
+        {
+            _context = context;
+        }
 
         /// <summary>
         /// This is the getter for context.

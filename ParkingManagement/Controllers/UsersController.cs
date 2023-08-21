@@ -10,7 +10,7 @@ namespace ParkingManagement.Controllers
     public class UsersController : BaseController
     {
         private readonly UsersService _service;
-        public UsersController(UsersService service) { _service = service;  }
+        public UsersController(UsersService service) { _service = service; }
 
         /// <summary>
         /// This function returns list of all Users available in database

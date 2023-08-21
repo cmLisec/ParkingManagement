@@ -48,5 +48,11 @@ namespace ParkingManagement.Domain.Models
         /// Specify updated date
         /// </summary>
         public DateTime UpdatedDate { get; set; }
+
+        //[InverseProperty("UserIdNavigation")]
+        //public virtual ICollection<ParkingCard> ParkingCard { get; set; }
+
+        //[InverseProperty("UserIdNavigation")]
+        //public virtual ICollection<ParkingCardHistory> ParkingCardHistory { get; set; }
     }
 }

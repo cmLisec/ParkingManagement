@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ParkingManagement.Domain.Repositories.v1
 {
@@ -66,7 +65,7 @@ namespace ParkingManagement.Domain.Repositories.v1
             User UserEntity = await GetContext().User.AsNoTracking().SingleOrDefaultAsync(i => i.Id == UserToUpdate.Id).ConfigureAwait(false);
             if (UserEntity == null)
                 return new BaseResponse<User>("", StatusCodes.Status404NotFound);
-          
+
             GetContext().User.Update(UserToUpdate);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<User>(UserToUpdate);

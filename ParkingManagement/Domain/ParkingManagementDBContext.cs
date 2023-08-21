@@ -1,9 +1,5 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
 using ParkingManagement.Domain.Models;
-using System;
 
 namespace ParkingManagement
 {
@@ -13,11 +9,15 @@ namespace ParkingManagement
     public class ParkingManagementDBContext : DbContext
     {
         public virtual DbSet<User> User { get; set; }
+
+        public virtual DbSet<ParkingCard> ParkingCard { get; set; }
+
+        public virtual DbSet<ParkingCardHistory> ParkingCardHistorie { get; set; }
         public ParkingManagementDBContext(DbContextOptions<ParkingManagementDBContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connection = "Server = dev-shop-01-sql.database.windows.net; Database = TestCm; User Id = LisecAdmin; Password = evenly-2PNPSKFX7;";
+            string connection = "Server = (localdb)\\local; Database = Park; User Id = sa; Password = mockb@1095;";
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(connection);

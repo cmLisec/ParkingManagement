@@ -3,7 +3,6 @@ using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.Dtos;
 using ParkingManagement.Domain.Models;
 using ParkingManagement.Domain.Repositories.v1;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ParkingManagement.Domain.Services.v1
 {
@@ -12,8 +11,8 @@ namespace ParkingManagement.Domain.Services.v1
         private readonly UsersRepository _repo;
         private readonly IMapper _mapper;
         public UsersService(UsersRepository repo, IMapper mapper)
-        { 
-            _repo = repo; 
+        {
+            _repo = repo;
             _mapper = mapper;
         }
         /// <summary>
@@ -59,14 +58,14 @@ namespace ParkingManagement.Domain.Services.v1
                 return new BaseResponse<UserDto>("", StatusCodes.Status400BadRequest);
 
 
-                var UserToAdded = _mapper.Map<UserDto, User>(User);
-                BaseResponse<User> response = await _repo.AddUserAsync(UserToAdded).ConfigureAwait(false);
-                if (response.IsSuccessStatusCode())
-                {
-                    UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
-                    return new BaseResponse<UserDto>(mappedResponse);
-                }
-                return new BaseResponse<UserDto>(response.Message, response.StatusCode);
+            var UserToAdded = _mapper.Map<UserDto, User>(User);
+            BaseResponse<User> response = await _repo.AddUserAsync(UserToAdded).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode())
+            {
+                UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
+                return new BaseResponse<UserDto>(mappedResponse);
+            }
+            return new BaseResponse<UserDto>(response.Message, response.StatusCode);
 
         }
 
@@ -82,16 +81,16 @@ namespace ParkingManagement.Domain.Services.v1
                 return new BaseResponse<UserDto>("", StatusCodes.Status400BadRequest);
 
 
-                var UserToUpdate = _mapper.Map<UserDto, User>(User);
-                if (UserToUpdate != null)
-                    UserToUpdate.Id = id;
-                BaseResponse<User> response = await _repo.UpdateUserAsync(UserToUpdate).ConfigureAwait(false);
-                if (response.IsSuccessStatusCode())
-                {
-                    UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
-                    return new BaseResponse<UserDto>(mappedResponse);
-                }
-                return new BaseResponse<UserDto>(response.Message, response.StatusCode);
+            var UserToUpdate = _mapper.Map<UserDto, User>(User);
+            if (UserToUpdate != null)
+                UserToUpdate.Id = id;
+            BaseResponse<User> response = await _repo.UpdateUserAsync(UserToUpdate).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode())
+            {
+                UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
+                return new BaseResponse<UserDto>(mappedResponse);
+            }
+            return new BaseResponse<UserDto>(response.Message, response.StatusCode);
 
         }
 
@@ -103,13 +102,13 @@ namespace ParkingManagement.Domain.Services.v1
         public async Task<BaseResponse<UserDto>> DeleteUserByIdAsync(int id)
         {
 
-                BaseResponse<User> response = await _repo.DeleteUserByIdAsync(id);
-                if (response.IsSuccessStatusCode())
-                {
-                    UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
-                    return new BaseResponse<UserDto>(mappedResponse);
-                }
-                return new BaseResponse<UserDto>(response.Message, response.StatusCode);
+            BaseResponse<User> response = await _repo.DeleteUserByIdAsync(id);
+            if (response.IsSuccessStatusCode())
+            {
+                UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
+                return new BaseResponse<UserDto>(mappedResponse);
+            }
+            return new BaseResponse<UserDto>(response.Message, response.StatusCode);
         }
     }
 }

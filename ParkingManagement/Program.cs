@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 using ParkingManagement;
-using ParkingManagement.Domain.Models;
 using ParkingManagement.Domain.Repositories.v1;
 using ParkingManagement.Domain.Services.v1;
 
@@ -21,11 +18,13 @@ internal class Program
 
         var optionsBuilder = new DbContextOptionsBuilder<ParkingManagementDBContext>();
 
-        string connection = "Server = dev-shop-01-sql.database.windows.net; Database = TestCm; User Id = LisecAdmin; Password = evenly-2PNPSKFX7;";
+        string connection = "(localdb)\\local; Database = Park; User Id = sa; Password = mockb@1095;";
         optionsBuilder.UseSqlServer(connection);
         builder.Services.AddDbContext<ParkingManagementDBContext>(provider => new ParkingManagementDBContext(optionsBuilder.Options));
         builder.Services.AddScoped<UsersService>();
         builder.Services.AddScoped<UsersRepository>();
+        builder.Services.AddScoped<ParkingCardService>();
+        builder.Services.AddScoped<ParkingCardRepository>();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
 
         var app = builder.Build();

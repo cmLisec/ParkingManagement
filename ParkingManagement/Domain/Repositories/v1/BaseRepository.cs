@@ -2,17 +2,14 @@
 
 namespace ParkingManagement.Domain.Repositories.v1
 {
-    public abstract class BaseRepository<T> 
+    public abstract class BaseRepository<T>
     {
         protected readonly DbContext _context;
         /// <summary>
         /// Constructor for BaseRepository class.
         /// </summary>
         /// <param name="context">Specifies the  db context.</param>
-        protected BaseRepository(ParkingManagementDBContext context)  
-        {
-            _context = context;
-        }
+        protected BaseRepository(ParkingManagementDBContext context) { }
 
         /// <summary>
         /// This is the getter for context.

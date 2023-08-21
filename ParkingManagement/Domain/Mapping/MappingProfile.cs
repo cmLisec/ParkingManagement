@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ParkingManagement.Domain.DTO;
 using ParkingManagement.Domain.Dtos;
 using ParkingManagement.Domain.Models;
 
@@ -27,6 +28,7 @@ namespace ParkingManagement
         {
             AllowNullCollections = true;
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<ParkingCard, ParkingCardDTO>().ReverseMap();
         }
     }
 }

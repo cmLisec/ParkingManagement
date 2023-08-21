@@ -17,7 +17,7 @@ namespace ParkingManagement
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connection = "Server=tcp:parknow.database.windows.net,1433;Initial Catalog=ParkNow;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=\"Active Directory Default\";";
+            string connection = "Data Source=parknow.database.windows.net;Initial Catalog=ParkNow;User ID=parknowAdmin;Password=parkNow@123;Connect Timeout=60;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(connection);

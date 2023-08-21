@@ -5,13 +5,13 @@ using ParkingManagement.Domain.Services.v1;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace ParkingManagement
 {
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
-        private const string _openApiDescription = @"A delivery tracking open api service";
         /// <summary>
         /// Constructor of Startup.
         /// </summary>
@@ -22,18 +22,17 @@ namespace ParkingManagement
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ParkingManagementDBContext>();
 
-            string connection = "Server=tcp:parknow.database.windows.net,1433;Initial Catalog=ParkNow;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=\"Active Directory Default\";";
-            optionsBuilder.UseSqlServer(connection);
-            services.AddDbContext<ParkingManagementDBContext>(provider => new ParkingManagementDBContext(optionsBuilder.Options));
+            string connection = "Data Source=parknow.database.windows.net;Initial Catalog=ParkNow;User ID=parknowAdmin;Password=parkNow@123;Connect Timeout=60;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+
+            services.AddDbContext<ParkingManagementDBContext>(options =>
+                                                              options.UseSqlServer(connection));
             services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
             services.AddScoped<ParkingCardService>();
             services.AddScoped<ParkingCardRepository>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddControllers();
-            services.AddAutoMapper(typeof(MappingProfile));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Parking Management API", Version = "v1" });
@@ -43,6 +42,15 @@ namespace ParkingManagement
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            try
+            {
+                using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                {
+                    scope.ServiceProvider.GetService<ParkingManagementDBContext>().Database.Migrate();
+                }
+            }
+            catch(Exception ex)
+            { }
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint

@@ -18,7 +18,7 @@ internal class Program
 
         var optionsBuilder = new DbContextOptionsBuilder<ParkingManagementDBContext>();
 
-        string connection = "(localdb)\\local; Database = Park; User Id = sa; Password = mockb@1095;";
+        string connection = "Server = parknow.cukvlrirhzja.eu-north-1.rds.amazonaws.com,1433; Database = parkNow; User Id = Admin; Password = test123456;Encrypt=true;TrustServerCertificate=true;";
         optionsBuilder.UseSqlServer(connection);
         builder.Services.AddDbContext<ParkingManagementDBContext>(provider => new ParkingManagementDBContext(optionsBuilder.Options));
         builder.Services.AddScoped<UsersService>();

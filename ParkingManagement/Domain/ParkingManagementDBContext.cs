@@ -17,7 +17,7 @@ namespace ParkingManagement
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connection = "Server = (localdb)\\local; Database = Park; User Id = sa; Password = mockb@1095;";
+            string connection = "Server = parknow.cukvlrirhzja.eu-north-1.rds.amazonaws.com,1433; Database = parkNow; User Id = Admin; Password = test123456;Encrypt=true;TrustServerCertificate=true;";
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(connection);

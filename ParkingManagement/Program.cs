@@ -18,7 +18,7 @@ internal class Program
 
         var optionsBuilder = new DbContextOptionsBuilder<ParkingManagementDBContext>();
 
-        string connection = "Server = parknow.cukvlrirhzja.eu-north-1.rds.amazonaws.com,1433; Database = parkNow; User Id = Admin; Password = test123456;Encrypt=true;TrustServerCertificate=true;";
+        string connection = "Server=tcp:parknow.database.windows.net,1433;Initial Catalog=ParkNow;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=\"Active Directory Default\";";
         optionsBuilder.UseSqlServer(connection);
         builder.Services.AddDbContext<ParkingManagementDBContext>(provider => new ParkingManagementDBContext(optionsBuilder.Options));
         builder.Services.AddScoped<UsersService>();

@@ -12,21 +12,20 @@ namespace ParkingManagement
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
+        public IConfiguration _configuration { get; }
         /// <summary>
         /// Constructor of Startup.
         /// </summary>
         /// <param name="env">Specify IWebHostEnvironment.</param>
-        public Startup(IWebHostEnvironment env)
+        public Startup(IWebHostEnvironment env, IConfiguration configuration)
         {
             _env = env;
+            _configuration = configuration;
         }
         public void ConfigureServices(IServiceCollection services)
         {
-
-            string connection = "Server=parkingmanagement.postgres.database.azure.com;Database=postgres;Port=5432;User Id=superUser;Password=admin@123;Ssl Mode=Require;Trust Server Certificate=true;";
-
             services.AddDbContext<ParkingManagementDBContext>(options =>
-                                                              options.UseNpgsql(connection));
+                                                              options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
             services.AddScoped<ParkingCardService>();

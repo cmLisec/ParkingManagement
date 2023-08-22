@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ParkingManagement
 {
@@ -30,7 +33,25 @@ namespace ParkingManagement
             services.AddScoped<UsersRepository>();
             services.AddScoped<ParkingCardService>();
             services.AddScoped<ParkingCardRepository>();
+            services.AddScoped<LoginService>();
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+          .AddJwtBearer(options =>
+          {
+              options.TokenValidationParameters = new TokenValidationParameters
+              {
+                  ValidateIssuer = true,
+                  ValidateAudience = true,
+                  ValidateIssuerSigningKey = true,
+                  ValidIssuer = _configuration["Jwt:Issuer"],
+                  ValidAudience = _configuration["Jwt:Audience"],
+                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+              };
+          });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -67,6 +88,7 @@ namespace ParkingManagement
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

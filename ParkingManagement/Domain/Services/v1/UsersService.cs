@@ -110,5 +110,6 @@ namespace ParkingManagement.Domain.Services.v1
             }
             return new BaseResponse<UserDto>(response.Message, response.StatusCode);
         }
+
     }
 }

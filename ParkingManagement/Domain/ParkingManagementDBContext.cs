@@ -17,10 +17,10 @@ namespace ParkingManagement
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connection = "Data Source=parknow.database.windows.net;Initial Catalog=ParkNow;User ID=parknowAdmin;Password=parkNow@123;Connect Timeout=60;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            string connection = "Server=parkingmanagement.postgres.database.azure.com;Database=postgres;Port=5432;User Id=superUser;Password=admin@123;Ssl Mode=Require;Trust Server Certificate=true;";
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(connection);
+                optionsBuilder.UseNpgsql(connection);
             }
         }
     }

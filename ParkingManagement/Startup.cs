@@ -23,10 +23,10 @@ namespace ParkingManagement
         public void ConfigureServices(IServiceCollection services)
         {
 
-            string connection = "Data Source=parknow.database.windows.net;Initial Catalog=ParkNow;User ID=parknowAdmin;Password=parkNow@123;Connect Timeout=60;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            string connection = "Server=parkingmanagement.postgres.database.azure.com;Database=postgres;Port=5432;User Id=superUser;Password=admin@123;Ssl Mode=Require;Trust Server Certificate=true;";
 
             services.AddDbContext<ParkingManagementDBContext>(options =>
-                                                              options.UseSqlServer(connection));
+                                                              options.UseNpgsql(connection));
             services.AddScoped<UsersService>();
             services.AddScoped<UsersRepository>();
             services.AddScoped<ParkingCardService>();

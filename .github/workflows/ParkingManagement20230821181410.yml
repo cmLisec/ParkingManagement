@@ -66,7 +66,7 @@ jobs:
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         publish-profile: ${{ secrets.ParkingManagement20230821181410_4BBB }}
     - name: Azure Login
-      uses: azure/login@v1
+      uses: azure/parkNowAdmin@v1
       with:
         creds: ${{ secrets.ParkingManagementapi_SPN }}
     - name: Import API into Azure API Management

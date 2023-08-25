@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.DTO;
-using ParkingManagement.Domain.Dtos;
 using ParkingManagement.Domain.Models;
 using ParkingManagement.Domain.Repositories.v1;
 

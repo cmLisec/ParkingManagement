@@ -15,7 +15,7 @@ namespace ParkingManagement.Domain.Services.v1
 
         public bool IsValidUser(string username, string password)
         {
-            return _repo.IsValidUser(username,password);
+            return _repo.IsValidUser(username, password);
         }
     }
 }

@@ -46,5 +46,9 @@ namespace ParkingManagement.Domain.Models
 
         //[InverseProperty("ParkingCardIdNavigation")]
         //public virtual ICollection<ParkingCardHistory> ParkingCardHistory { get; set; }
+        [ForeignKey(nameof(CardId))]
+
+        public int CardId { get; set; }
+        public CardDetails CardDetails { get; set; }
     }
 }

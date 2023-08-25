@@ -15,12 +15,32 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// </summary>
         /// <param name="query">Specify Query Parameter</param>
         /// <returns>Baseresponse with list of parking card</returns>
-        public async Task<BaseResponse<List<ParkingCard>>> GetAllParkingCardAsync()
+        public async Task<BaseResponse<List<ParkingCard>>> GetAvailableParkingCardAsync(DateTime startDate)
         {
-            List<ParkingCard> UserList = await GetContext().ParkingCard.Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
-            if (UserList.Count <= 0)
-                return new BaseResponse<List<ParkingCard>>("No content available", StatusCodes.Status204NoContent);
-            return new BaseResponse<List<ParkingCard>>(UserList);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date).OrderBy(x => x.CardId).ToListAsync().ConfigureAwait(false);
+            return new BaseResponse<List<ParkingCard>>(parkingCard);
+        }
+
+        /// <summary>
+        /// This function fetch all parking card available from database.
+        /// </summary>
+        /// <param name="query">Specify Query Parameter</param>
+        /// <returns>Baseresponse with list of parking card</returns>
+        public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistory()
+        {
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
+            return new BaseResponse<List<ParkingCard>>(parkingCard);
+        }
+
+        /// <summary>
+        /// This function fetch all parking card available from database.
+        /// </summary>
+        /// <param name="query">Specify Query Parameter</param>
+        /// <returns>Baseresponse with list of parking card</returns>
+        public async Task<BaseResponse<int>> GetAvailableCardDetailsAsync()
+        {
+            int parkingCard = await GetContext().CardDetails.CountAsync();
+            return new BaseResponse<int>(parkingCard);
         }
 
         /// <summary>
@@ -30,10 +50,10 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<ParkingCard>> GetParkingCardByUserIdAsync(int id)
         {
-            ParkingCard UserEntity = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.UserId == id).ConfigureAwait(false);
-            if (UserEntity == null)
+            ParkingCard parkingCard = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.UserId == id).ConfigureAwait(false);
+            if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Not found", StatusCodes.Status404NotFound);
-            return new BaseResponse<ParkingCard>(UserEntity);
+            return new BaseResponse<ParkingCard>(parkingCard);
         }
 
         /// <summary>
@@ -58,8 +78,8 @@ namespace ParkingManagement.Domain.Repositories.v1
         {
             if (parkingCardUpdate == null) return new BaseResponse<ParkingCard>("Bad request", StatusCodes.Status400BadRequest);
 
-            ParkingCard UserEntity = await GetContext().ParkingCard.AsNoTracking().SingleOrDefaultAsync(i => i.Id == parkingCardUpdate.Id && i.UserId == parkingCardUpdate.UserId).ConfigureAwait(false);
-            if (UserEntity == null)
+            ParkingCard parkingCard = await GetContext().ParkingCard.AsNoTracking().SingleOrDefaultAsync(i => i.Id == parkingCardUpdate.Id && i.UserId == parkingCardUpdate.UserId).ConfigureAwait(false);
+            if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Parking card not found", StatusCodes.Status404NotFound);
 
             GetContext().ParkingCard.Update(parkingCardUpdate);
@@ -75,13 +95,13 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<ParkingCard>> DeleteParkingCardByIdAsync(int id, int userId)
         {
-            ParkingCard UserEntity = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.Id == id && i.UserId == userId).ConfigureAwait(false);
-            if (UserEntity == null)
+            ParkingCard parkingCard = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.Id == id && i.UserId == userId).ConfigureAwait(false);
+            if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Not found", StatusCodes.Status404NotFound);
 
-            GetContext().ParkingCard.Remove(UserEntity);
+            GetContext().ParkingCard.Remove(parkingCard);
             await CompleteAsync().ConfigureAwait(false);
-            return new BaseResponse<ParkingCard>(UserEntity);
+            return new BaseResponse<ParkingCard>(parkingCard);
         }
     }
 }

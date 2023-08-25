@@ -22,13 +22,13 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully get all parking card</response>
         /// <response code="204">Content Not Available</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet]
+        [HttpGet("{startDate}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<ParkingCardDTO>>> GetAllUserAsync()
+        public async Task<ActionResult<AvailableParkingCardDTO>> GetAvailableParkingCardAsync([FromRoute] DateTime startDate)
         {
-            BaseResponse<List<ParkingCardDTO>> response = await _service.GetAllParkingCardAsync().ConfigureAwait(false);
+            BaseResponse<AvailableParkingCardDTO> response = await _service.GetAvailableParkingCardAsync(startDate).ConfigureAwait(false);
             return ReplyBaseResponse(response);
         }
 
@@ -44,7 +44,7 @@ namespace ParkingManagement.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ParkingCardDTO>> GetUserByIdAsync([FromRoute] int id)
+        public async Task<ActionResult<ParkingCardDTO>> GetParkingCardByIdAsync([FromRoute] int id)
         {
             BaseResponse<ParkingCardDTO> response = await _service.GetParkingCardByIdAsync(id).ConfigureAwait(false);
             return ReplyBaseResponse(response);
@@ -64,7 +64,7 @@ namespace ParkingManagement.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ParkingCardDTO>> AddUserAsync([FromBody] ParkingCardDTO parkingCard)
+        public async Task<ActionResult<ParkingCardDTO>> AddParkingCardAsync([FromBody] ParkingCardDTO parkingCard)
         {
             BaseResponse<ParkingCardDTO> response = await _service.AddParkingCardAsync(parkingCard).ConfigureAwait(false);
             return ReplyBaseResponse(response);
@@ -85,7 +85,7 @@ namespace ParkingManagement.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ParkingCardDTO>> UpdateUserAsync([FromRoute] int id, [FromBody] ParkingCardDTO parkingCard)
+        public async Task<ActionResult<ParkingCardDTO>> UpdateParkingCardAsync([FromRoute] int id, [FromBody] ParkingCardDTO parkingCard)
         {
             BaseResponse<ParkingCardDTO> response = await _service.UpdateParkingCardAsync(id, parkingCard).ConfigureAwait(false);
             return ReplyBaseResponse(response);
@@ -103,9 +103,26 @@ namespace ParkingManagement.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ParkingCardDTO>> DeleteUserByIdAsync([FromRoute] int id, [FromRoute] int userId)
+        public async Task<ActionResult<ParkingCardDTO>> DeleteParkingCardByIdAsync([FromRoute] int id, [FromRoute] int userId)
         {
             BaseResponse<ParkingCardDTO> response = await _service.DeleteParkingCardByIdAsync(id, userId).ConfigureAwait(false);
+            return ReplyBaseResponse(response);
+        }
+
+        /// <summary>
+        /// This function returns booked parking card history
+        /// </summary>
+        /// <returns>BaseResponse with UserDto</returns>
+        /// <response code="200">Successfully get the parking card with Id</response>
+        /// <response code="404">parking card with the given Id not found</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<ParkingCardDTO>>> GetBookedParkingCardHistory()
+        {
+            BaseResponse<List<ParkingCardDTO>> response = await _service.GetBookedParkingCardHistory().ConfigureAwait(false);
             return ReplyBaseResponse(response);
         }
     }

@@ -13,6 +13,8 @@ namespace ParkingManagement
         public virtual DbSet<ParkingCard> ParkingCard { get; set; }
 
         public virtual DbSet<ParkingCardHistory> ParkingCardHistorie { get; set; }
+
+        public virtual DbSet<CardDetails> CardDetails { get; set; }
         public DbSet<Payments> Payments { get; set; }
         public DbSet<UserPayment> UserPayments { get; set; }
         public ParkingManagementDBContext(DbContextOptions<ParkingManagementDBContext> options) : base(options) { }

@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using ParkingManagement.Domain.Repositories.v1;
 using ParkingManagement.Domain.Services.v1;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace ParkingManagement

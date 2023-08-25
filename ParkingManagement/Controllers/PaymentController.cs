@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.DTO;
-using ParkingManagement.Domain.Dtos;
-using ParkingManagement.Domain.Repositories.v1;
 using ParkingManagement.Domain.Services.v1;
 
 namespace ParkingManagement.Controllers
@@ -11,7 +9,7 @@ namespace ParkingManagement.Controllers
     [Route("v1/api/[Controller]")]
     [ApiController]
     [Authorize]
-    public class PaymentController :BaseController
+    public class PaymentController : BaseController
     {
         private readonly PaymentService _service;
         public PaymentController(PaymentService service)

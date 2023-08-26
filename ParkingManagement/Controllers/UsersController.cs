@@ -8,7 +8,6 @@ namespace ParkingManagement.Controllers
 {
     [Route("v1/api/[Controller]")]
     [ApiController]
-    [Authorize]
     public class UsersController : BaseController
     {
         private readonly UsersService _service;
@@ -22,6 +21,7 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully get all Users</response>
         /// <response code="204">Content Not Available</response>
         /// <response code="500">Internal server error</response>
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -40,6 +40,7 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully get the User with Id</response>
         /// <response code="404">User with the given Id not found</response>
         /// <response code="500">Internal server error</response>
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -80,6 +81,7 @@ namespace ParkingManagement.Controllers
         /// <response code="400">badRequest</response>
         /// <response code="404">User not found</response>
         /// <response code="500">internal server error</response>
+        [Authorize]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -99,6 +101,7 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully added the User</response>      
         /// <response code="404">User with the given id not found</response>
         /// <response code="500">Internal server error</response>
+        [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

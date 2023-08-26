@@ -34,5 +34,8 @@ namespace ParkingManagement.Domain.DTO
         /// </summary>
         [Required]
         public string ParkedLocation { get; set; }
+
+        [Required]
+        public int CardId { get; set; }
     }
 }

@@ -10,11 +10,15 @@ namespace ParkingManagement.Domain.Models
         /// </summary>
         [Key]
         public int Id { get; set; }
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey("User")]
         public int UserId { get; set; }
-        [ForeignKey(nameof(ParkingCardId))]
+
+        public User User { get; set; }
+
+        [ForeignKey("ParkingCard")]
 
         public int ParkingCardId { get; set; }
+        public ParkingCard ParkingCard { get; set; }
 
         /// <summary>
         /// Specify time
@@ -43,11 +47,8 @@ namespace ParkingManagement.Domain.Models
 
         //[ForeignKey(nameof(UserId))]
         //[InverseProperty(nameof(User.ParkingCardHistory))]
-        public User User { get; set; }
 
-        [ForeignKey(nameof(ParkingCardId))]
         //[InverseProperty(nameof(ParkingCard.ParkingCardHistory))]
-        public ParkingCard ParkingCard { get; set; }
 
 
     }

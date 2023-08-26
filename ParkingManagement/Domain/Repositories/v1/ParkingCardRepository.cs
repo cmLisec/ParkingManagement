@@ -18,6 +18,11 @@ namespace ParkingManagement.Domain.Repositories.v1
         public async Task<BaseResponse<List<ParkingCard>>> GetAvailableParkingCardAsync(DateTime startDate)
         {
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date).OrderBy(x => x.CardId).ToListAsync().ConfigureAwait(false);
+            foreach (var data in parkingCard)
+            {
+                data.StartDate = data.StartDate.ToUniversalTime();
+                data.EndDate = data.EndDate.ToUniversalTime();
+            }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
@@ -28,7 +33,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistory()
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
@@ -64,6 +69,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         public async Task<BaseResponse<ParkingCard>> AddParkingCardAsync(ParkingCard parkingCard)
         {
             if (parkingCard == null) return new BaseResponse<ParkingCard>("Bad request", StatusCodes.Status400BadRequest);
+            parkingCard.CreatedAt = DateTime.Now;
             GetContext().ParkingCard.Add(parkingCard);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<ParkingCard>(parkingCard);

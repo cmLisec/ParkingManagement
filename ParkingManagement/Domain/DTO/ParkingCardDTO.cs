@@ -37,5 +37,7 @@ namespace ParkingManagement.Domain.DTO
 
         [Required]
         public int CardId { get; set; }
+
+        public bool IsMultipleDay { get; set; }
     }
 }

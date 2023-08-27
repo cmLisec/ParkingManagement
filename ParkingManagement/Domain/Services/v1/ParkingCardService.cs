@@ -172,9 +172,8 @@ namespace ParkingManagement.Domain.Services.v1
             if (parkingCard == null)
                 return new BaseResponse<ParkingCardDTO>("Bad request", StatusCodes.Status400BadRequest);
 
-
             var parkingCardToAdd = _mapper.Map<ParkingCardDTO, ParkingCard>(parkingCard);
-            BaseResponse<ParkingCard> response = await _repo.AddParkingCardAsync(parkingCardToAdd).ConfigureAwait(false);
+            BaseResponse<ParkingCard> response = await _repo.AddParkingCardAsync(parkingCardToAdd, parkingCard.IsMultipleDay).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
                 ParkingCardDTO mappedResponse = _mapper.Map<ParkingCard, ParkingCardDTO>(response.Resource);

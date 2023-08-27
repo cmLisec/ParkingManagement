@@ -66,9 +66,33 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// </summary>
         /// <param name="parkingCard">Specify parking card</param>
         /// <returns>Baseresponse with parking card</returns>
-        public async Task<BaseResponse<ParkingCard>> AddParkingCardAsync(ParkingCard parkingCard)
+        public async Task<BaseResponse<ParkingCard>> AddParkingCardAsync(ParkingCard parkingCard, bool isMultipleDay)
         {
             if (parkingCard == null) return new BaseResponse<ParkingCard>("Bad request", StatusCodes.Status400BadRequest);
+
+            List<ParkingCard> parkingCards = new List<ParkingCard>();
+
+            if (isMultipleDay)
+            {
+                for (var startDate = parkingCard.StartDate; startDate <= parkingCard.EndDate; startDate = startDate.AddDays(1))
+                {
+                    var fg = new DateTime(startDate.Year, startDate.Month, startDate.Day, parkingCard.EndDate.Hour, parkingCard.EndDate.Minute, parkingCard.EndDate.Second);
+                    parkingCards.Add(new ParkingCard
+                    {
+                        CardId = parkingCard.CardId,
+                        CreatedAt = DateTime.Now,
+                        StartDate = startDate,
+                        EndDate = fg,
+                        Time = DateTime.Now,
+                        ParkedLocation = parkingCard.ParkedLocation,
+                        UserId = parkingCard.UserId
+                    });
+                }
+                GetContext().ParkingCard.AddRange(parkingCards);
+                await CompleteAsync().ConfigureAwait(false);
+                return new BaseResponse<ParkingCard>(parkingCard);
+            }
+
             parkingCard.CreatedAt = DateTime.Now;
             GetContext().ParkingCard.Add(parkingCard);
             await CompleteAsync().ConfigureAwait(false);

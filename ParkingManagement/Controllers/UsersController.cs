@@ -60,6 +60,7 @@ namespace ParkingManagement.Controllers
         /// <response code="400">BadRequest</response>
         /// <response code="409">User already exists</response>
         /// <response code="500">Internal server error</response>
+        [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

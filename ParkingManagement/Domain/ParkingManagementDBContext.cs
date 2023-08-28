@@ -12,7 +12,7 @@ namespace ParkingManagement
 
         public virtual DbSet<ParkingCard> ParkingCard { get; set; }
 
-        public virtual DbSet<ParkingCardHistory> ParkingCardHistorie { get; set; }
+        public virtual DbSet<ParkingCardHistory> ParkingCardHistory { get; set; }
 
         public virtual DbSet<CardDetails> CardDetails { get; set; }
         public DbSet<Payments> Payments { get; set; }

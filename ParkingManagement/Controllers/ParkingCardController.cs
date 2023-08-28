@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.DTO;
 using ParkingManagement.Domain.Services.v1;
@@ -8,7 +7,7 @@ namespace ParkingManagement.Controllers
 {
     [Route("v1/api/[Controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ParkingCardController : BaseController
     {
         private readonly ParkingCardService _service;
@@ -17,12 +16,12 @@ namespace ParkingManagement.Controllers
         /// <summary>
         /// This function returns list of all parking card available in database
         /// </summary>
-        /// <param name="query">Specify Query parameter</param>
+        /// <param name="startDate">Specify start date</param>
         /// <returns>BaseResponse with list of parking card</returns>
         /// <response code="200">Successfully get all parking card</response>
         /// <response code="204">Content Not Available</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet("{startDate}")]
+        [HttpGet("{startDate}/AvailableParkingCards")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]

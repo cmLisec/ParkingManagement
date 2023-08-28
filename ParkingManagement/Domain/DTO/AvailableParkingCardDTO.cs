@@ -2,10 +2,10 @@
 {
     public class AvailableParkingCardDTO
     {
-        public DateTime StartDate { get; set; }
+        /// <summary>
+        /// AvailableParkingCards
+        /// </summary>
+        public Dictionary<int, List<TimeSlotDTO>> AvailableParkingCards { get; set; }
 
-        public DateTime EndDate { get; set; }
-
-        public Dictionary<int, Dictionary<DateTime, DateTime>> AvailableParkingCards { get; set; }
     }
 }

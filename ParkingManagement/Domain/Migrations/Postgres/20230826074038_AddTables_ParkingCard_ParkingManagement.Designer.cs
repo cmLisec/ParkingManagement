@@ -12,8 +12,8 @@ using ParkingManagement;
 namespace ParkingManagement.Domain.Migrations.Postgres
 {
     [DbContext(typeof(ParkingManagementDBContext))]
-    [Migration("20230825092937_CreateTable_ParkingCard_ParkingManagement")]
-    partial class CreateTable_ParkingCard_ParkingManagement
+    [Migration("20230826074038_AddTables_ParkingCard_ParkingManagement")]
+    partial class AddTables_ParkingCard_ParkingManagement
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,9 +53,6 @@ namespace ParkingManagement.Domain.Migrations.Postgres
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CardDetailsId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CardId")
                         .HasColumnType("integer");
 
@@ -80,7 +77,7 @@ namespace ParkingManagement.Domain.Migrations.Postgres
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CardDetailsId");
+                    b.HasIndex("CardId");
 
                     b.HasIndex("UserId");
 
@@ -123,7 +120,7 @@ namespace ParkingManagement.Domain.Migrations.Postgres
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ParkingCardHistorie");
+                    b.ToTable("ParkingCardHistory");
                 });
 
             modelBuilder.Entity("ParkingManagement.Domain.Models.Payments", b =>
@@ -234,7 +231,7 @@ namespace ParkingManagement.Domain.Migrations.Postgres
                 {
                     b.HasOne("ParkingManagement.Domain.Models.CardDetails", "CardDetails")
                         .WithMany()
-                        .HasForeignKey("CardDetailsId")
+                        .HasForeignKey("CardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

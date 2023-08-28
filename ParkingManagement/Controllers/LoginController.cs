@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ParkingManagement.Domain.Services.v1;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,6 +21,7 @@ namespace ParkingManagement.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login(LoginModel model)
         {

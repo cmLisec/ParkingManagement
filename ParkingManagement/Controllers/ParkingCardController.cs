@@ -21,7 +21,7 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully get all parking card</response>
         /// <response code="204">Content Not Available</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet("{startDate}/AvailableParkingCards")]
+        [HttpGet("{startDate}/ParkingCardsAvailable")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]

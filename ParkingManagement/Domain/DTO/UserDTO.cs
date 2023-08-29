@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 
 namespace ParkingManagement.Domain.Dtos
 {
@@ -21,7 +22,7 @@ namespace ParkingManagement.Domain.Dtos
         /// <summary>
         /// Specify user contact number
         /// </summary>
-        public int ContactNumber { get; set; }
+        public long ContactNumber { get; set; }
         /// <summary>
         /// Specify User Password
         /// </summary>

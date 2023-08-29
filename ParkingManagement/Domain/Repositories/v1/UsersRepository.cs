@@ -48,6 +48,8 @@ namespace ParkingManagement.Domain.Repositories.v1
             if (UserEntity != null)
                 return new BaseResponse<User>("", StatusCodes.Status409Conflict);
 
+            UserToAdded.CreatedDate = DateTime.Now;
+            UserToAdded.UpdatedDate = DateTime.Now;
             GetContext().User.Add(UserToAdded);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<User>(UserToAdded);

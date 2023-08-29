@@ -25,7 +25,7 @@ namespace ParkingManagement.Domain.Models
         /// <summary>
         /// Specify user contact number
         /// </summary>
-        public int ContactNumber { get; set; }
+        public long ContactNumber { get; set; }
         /// <summary>
         /// Specify User Password
         /// </summary>

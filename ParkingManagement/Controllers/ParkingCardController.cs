@@ -25,7 +25,7 @@ namespace ParkingManagement.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AvailableParkingCardDTO>> GetAvailableParkingCardAsync([FromRoute] DateTime startDate)
+        public async Task<ActionResult<AvailableParkingCardDTO>> GetAvailableParkingCardAsync(DateTime startDate)
         {
             BaseResponse<AvailableParkingCardDTO> response = await _service.GetAvailableParkingCardAsync(startDate).ConfigureAwait(false);
             return ReplyBaseResponse(response);

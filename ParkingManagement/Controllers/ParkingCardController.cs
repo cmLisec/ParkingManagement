@@ -21,11 +21,11 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully get all parking card</response>
         /// <response code="204">Content Not Available</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet("{startDate}/AvailableParkingCards")]
+        [HttpGet("ParkingCardsAvailable/{startDate}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AvailableParkingCardDTO>> GetAvailableParkingCardAsync([FromRoute] DateTime startDate)
+        public async Task<ActionResult<AvailableParkingCardDTO>> GetAvailableParkingCardAsync(DateTime startDate)
         {
             BaseResponse<AvailableParkingCardDTO> response = await _service.GetAvailableParkingCardAsync(startDate).ConfigureAwait(false);
             return ReplyBaseResponse(response);
@@ -115,7 +115,7 @@ namespace ParkingManagement.Controllers
         /// <response code="200">Successfully get the parking card with Id</response>
         /// <response code="404">parking card with the given Id not found</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet]
+        [HttpGet("BookedParkingCard")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]

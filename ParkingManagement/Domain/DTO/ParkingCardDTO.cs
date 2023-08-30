@@ -32,12 +32,9 @@ namespace ParkingManagement.Domain.DTO
         /// <summary>
         /// Specify parked location
         /// </summary>
-        [Required]
         public string ParkedLocation { get; set; }
 
         [Required]
         public int CardId { get; set; }
-
-        public bool IsMultipleDay { get; set; }
     }
 }

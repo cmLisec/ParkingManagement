@@ -21,9 +21,9 @@ namespace ParkingManagement.Domain.Services.v1
         /// This fuction returns list of all parking card available in database
         /// </summary>
         /// <returns>Baseresponse with list of parking card</returns>
-        public async Task<BaseResponse<AvailableParkingCardDTO>> GetAvailableParkingCardAsync(DateTime startDate)
+        public async Task<BaseResponse<AvailableParkingCardDTO>> GetAvailableParkingCardAsync(DateTime startDate, DateTime endDate)
         {
-            BaseResponse<List<ParkingCard>> response = await _repo.GetAvailableParkingCardAsync(startDate).ConfigureAwait(false);
+            BaseResponse<List<ParkingCard>> response = await _repo.GetAvailableParkingCardAsync(startDate, endDate).ConfigureAwait(false);
             BaseResponse<int> cardCount = await _repo.GetAvailableCardDetailsAsync();
             if (response.IsSuccessStatusCode() && cardCount.IsSuccessStatusCode())
             {
@@ -53,6 +53,8 @@ namespace ParkingManagement.Domain.Services.v1
 
                     foreach (var item in response.Resource)
                     {
+                        date.start = new DateTime(item.StartDate.Date.Year, item.StartDate.Date.Month, item.StartDate.Date.Day, date.start.Hour, date.start.Minute, date.start.Second);
+                        date.end = new DateTime(item.EndDate.Date.Year, item.EndDate.Date.Month, item.EndDate.Date.Day, date.end.Hour, date.end.Minute, date.end.Second);
                         availableParkingCards.TryGetValue(item.CardId, out var values);
 
                         if (values == null)
@@ -151,9 +153,9 @@ namespace ParkingManagement.Domain.Services.v1
         /// </summary>
         /// <param name="id">Specify Id of User</param>
         /// <returns>BaseResponse with parking card</returns>
-        public async Task<BaseResponse<ParkingCardDTO>> GetParkingCardByIdAsync(int id)
+        public async Task<BaseResponse<ParkingCardDTO>> GetParkingCardByIdAsync(int id, int userId)
         {
-            BaseResponse<ParkingCard> response = await _repo.GetParkingCardByUserIdAsync(id).ConfigureAwait(false);
+            BaseResponse<ParkingCard> response = await _repo.GetParkingCardByUserIdAsync(id, userId).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
                 ParkingCardDTO mappedResponse = _mapper.Map<ParkingCard, ParkingCardDTO>(response.Resource);
@@ -167,19 +169,19 @@ namespace ParkingManagement.Domain.Services.v1
         /// </summary>
         /// <param name="parkingCard">Specify parking card</param>
         /// <returns>Baseresponse with parking card</returns>
-        public async Task<BaseResponse<ParkingCardDTO>> AddParkingCardAsync(ParkingCardDTO parkingCard)
+        public async Task<BaseResponse<List<ParkingCardDTO>>> AddParkingCardAsync(List<ParkingCardDTO> parkingCard)
         {
-            if (parkingCard == null)
-                return new BaseResponse<ParkingCardDTO>("Bad request", StatusCodes.Status400BadRequest);
+            if (parkingCard.Count == 0)
+                return new BaseResponse<List<ParkingCardDTO>>("Bad request", StatusCodes.Status400BadRequest);
 
-            var parkingCardToAdd = _mapper.Map<ParkingCardDTO, ParkingCard>(parkingCard);
-            BaseResponse<ParkingCard> response = await _repo.AddParkingCardAsync(parkingCardToAdd, parkingCard.IsMultipleDay).ConfigureAwait(false);
+            var parkingCardToAdd = _mapper.Map<List<ParkingCardDTO>, List<ParkingCard>>(parkingCard);
+            BaseResponse<List<ParkingCard>> response = await _repo.AddParkingCardAsync(parkingCardToAdd).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
-                ParkingCardDTO mappedResponse = _mapper.Map<ParkingCard, ParkingCardDTO>(response.Resource);
-                return new BaseResponse<ParkingCardDTO>(mappedResponse);
+                List<ParkingCardDTO> mappedResponse = _mapper.Map<List<ParkingCard>, List<ParkingCardDTO>>(response.Resource);
+                return new BaseResponse<List<ParkingCardDTO>>(mappedResponse);
             }
-            return new BaseResponse<ParkingCardDTO>(response.Message, response.StatusCode);
+            return new BaseResponse<List<ParkingCardDTO>>(response.Message, response.StatusCode);
 
         }
 

@@ -15,9 +15,9 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// </summary>
         /// <param name="query">Specify Query Parameter</param>
         /// <returns>Baseresponse with list of parking card</returns>
-        public async Task<BaseResponse<List<ParkingCard>>> GetAvailableParkingCardAsync(DateTime startDate)
+        public async Task<BaseResponse<List<ParkingCard>>> GetAvailableParkingCardAsync(DateTime startDate, DateTime endDate)
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date).OrderBy(x => x.CardId).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date && x.StartDate.Date <= endDate.Date).OrderBy(x => x.CardId).ToListAsync().ConfigureAwait(false);
             foreach (var data in parkingCard)
             {
                 data.StartDate = data.StartDate.ToUniversalTime();
@@ -53,9 +53,9 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// </summary>
         /// <param name="id">Specify Id of User</param>
         /// <returns>Baseresponse with parking card</returns>
-        public async Task<BaseResponse<ParkingCard>> GetParkingCardByUserIdAsync(int id)
+        public async Task<BaseResponse<ParkingCard>> GetParkingCardByUserIdAsync(int id, int userId)
         {
-            ParkingCard parkingCard = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.UserId == id).ConfigureAwait(false);
+            ParkingCard parkingCard = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.Id == id && i.UserId == id).ConfigureAwait(false);
             if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Not found", StatusCodes.Status404NotFound);
             return new BaseResponse<ParkingCard>(parkingCard);
@@ -66,37 +66,13 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// </summary>
         /// <param name="parkingCard">Specify parking card</param>
         /// <returns>Baseresponse with parking card</returns>
-        public async Task<BaseResponse<ParkingCard>> AddParkingCardAsync(ParkingCard parkingCard, bool isMultipleDay)
+        public async Task<BaseResponse<List<ParkingCard>>> AddParkingCardAsync(List<ParkingCard> parkingCard)
         {
-            if (parkingCard == null) return new BaseResponse<ParkingCard>("Bad request", StatusCodes.Status400BadRequest);
+            if (parkingCard.Count == 0) return new BaseResponse<List<ParkingCard>>("Bad request", StatusCodes.Status400BadRequest);
 
-            List<ParkingCard> parkingCards = new List<ParkingCard>();
-
-            if (isMultipleDay)
-            {
-                for (var startDate = parkingCard.StartDate; startDate <= parkingCard.EndDate; startDate = startDate.AddDays(1))
-                {
-                    var fg = new DateTime(startDate.Year, startDate.Month, startDate.Day, parkingCard.EndDate.Hour, parkingCard.EndDate.Minute, parkingCard.EndDate.Second);
-                    parkingCards.Add(new ParkingCard
-                    {
-                        CardId = parkingCard.CardId,
-                        CreatedAt = DateTime.Now,
-                        StartDate = startDate,
-                        EndDate = fg,
-                        Time = DateTime.Now,
-                        ParkedLocation = parkingCard.ParkedLocation,
-                        UserId = parkingCard.UserId
-                    });
-                }
-                GetContext().ParkingCard.AddRange(parkingCards);
-                await CompleteAsync().ConfigureAwait(false);
-                return new BaseResponse<ParkingCard>(parkingCard);
-            }
-
-            parkingCard.CreatedAt = DateTime.Now;
-            GetContext().ParkingCard.Add(parkingCard);
+            GetContext().ParkingCard.AddRange(parkingCard);
             await CompleteAsync().ConfigureAwait(false);
-            return new BaseResponse<ParkingCard>(parkingCard);
+            return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
         /// <summary>

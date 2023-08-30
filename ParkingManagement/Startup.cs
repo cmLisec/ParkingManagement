@@ -84,10 +84,10 @@ namespace ParkingManagement
                         builder
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowAnyHeader();
                     });
             });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -116,7 +116,10 @@ namespace ParkingManagement
                 app.UseSwaggerUI();
             }
 
+
             app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

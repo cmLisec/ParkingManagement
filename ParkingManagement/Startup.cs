@@ -32,6 +32,8 @@ namespace ParkingManagement
             services.AddScoped<LoginService>();
             services.AddScoped<PaymentRepository>();
             services.AddScoped<PaymentService>();
+            services.AddScoped<CardDetailsRepository>();
+            services.AddScoped<CardDetailsService>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddAuthentication(options =>
             {

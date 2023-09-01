@@ -27,13 +27,22 @@ namespace ParkingManagement.Domain.Repositories.v1
         }
 
         /// <summary>
-        /// This function fetch all parking card available from database.
+        /// This function fetch booked parking card from database.
         /// </summary>
-        /// <param name="query">Specify Query Parameter</param>
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistory()
         {
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
+            return new BaseResponse<List<ParkingCard>>(parkingCard);
+        }
+
+        /// <summary>
+        /// This function fetch all parking card for user from database.
+        /// </summary>
+        /// <returns>Baseresponse with list of parking card</returns>
+        public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistoryForUser(int userId)
+        {
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
@@ -55,7 +64,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<ParkingCard>> GetParkingCardByUserIdAsync(int id, int userId)
         {
-            ParkingCard parkingCard = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.Id == id && i.UserId == id).ConfigureAwait(false);
+            ParkingCard parkingCard = await GetContext().ParkingCard.SingleOrDefaultAsync(i => i.Id == id && i.UserId == userId).ConfigureAwait(false);
             if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Not found", StatusCodes.Status404NotFound);
             return new BaseResponse<ParkingCard>(parkingCard);

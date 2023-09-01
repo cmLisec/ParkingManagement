@@ -17,6 +17,11 @@ namespace ParkingManagement.Domain.Services.v1
             _mapper = mapper;
         }
 
+        public class AvailableDateSlots
+        {
+            public Dictionary<DateTime, Dictionary<DateTime, DateTime>> AvailableSlot { get; set; }
+        }
+
         /// <summary>
         /// This fuction returns list of all parking card available in database
         /// </summary>
@@ -29,7 +34,7 @@ namespace ParkingManagement.Domain.Services.v1
             {
                 AvailableParkingCardDTO parent = new()
                 {
-                    AvailableParkingCards = new Dictionary<int, List<TimeSlotDTO>>()
+                    AvailableParkingCards = new Dictionary<int, List<DateSlotDTO>>()
                 };
                 var date = GetPArkingSchedule();
 
@@ -37,19 +42,17 @@ namespace ParkingManagement.Domain.Services.v1
                 {
                     for (int i = 1; i <= cardCount.Resource; i++)
                     {
-                        List<TimeSlotDTO> children = new List<TimeSlotDTO>();
-                        TimeSlotDTO child = new TimeSlotDTO
-                        {
-                            StartDate = date.start,
-                            EndDate = date.end
-                        };
+                        List<DateSlotDTO> children = new List<DateSlotDTO>();
+                        DateSlotDTO child = new DateSlotDTO();
+                        child.AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>();
+                        child.AvailableSlot.Add(date.start, new List<TimeSlotDTO> { new TimeSlotDTO() { StartDate = date.start, EndDate = date.end } });
                         children.Add(child);
                         parent.AvailableParkingCards.Add(i, children);
                     }
                 }
                 else
                 {
-                    Dictionary<int, Dictionary<DateTime, DateTime>> availableParkingCards = new();
+                    Dictionary<int, AvailableDateSlots> availableParkingCards = new();
 
                     foreach (var item in response.Resource)
                     {
@@ -59,48 +62,63 @@ namespace ParkingManagement.Domain.Services.v1
 
                         if (values == null)
                         {
-                            availableParkingCards.Add(item.CardId, new Dictionary<DateTime, DateTime>());
-                            availableParkingCards[item.CardId].Add(date.start, date.end);
+                            availableParkingCards.Add(item.CardId, new AvailableDateSlots());
+                            availableParkingCards[item.CardId].AvailableSlot = new Dictionary<DateTime, Dictionary<DateTime, DateTime>>();
+                            availableParkingCards[item.CardId].AvailableSlot.Add(date.start, new Dictionary<DateTime, DateTime>());//.KeyDate = date.start;
+                            availableParkingCards[item.CardId].AvailableSlot[date.start].Add(date.start, date.end);
                         }
-                        availableParkingCards.TryGetValue(item.CardId, out var value);
-                        foreach (var item2 in value.ToList())
+
+                        availableParkingCards.TryGetValue(item.CardId, out var values1);
+                        if (values1 != null)
+                        {
+                            bool key = values1.AvailableSlot.ContainsKey(date.start);
+                            if (!key)
+                            {
+                                availableParkingCards[item.CardId].AvailableSlot.Add(date.start, new Dictionary<DateTime, DateTime>());//.KeyDate = date.start;
+
+                                availableParkingCards[item.CardId].AvailableSlot[date.start].Add(date.start, date.end);
+                            }
+                        }
+                        values1.AvailableSlot.TryGetValue(date.start, out var values2);
+
+                        foreach (var item2 in values2.ToList())
                         {
                             if (item.StartDate == item2.Key && item.EndDate >= item2.Value || item.StartDate < item2.Key && item.EndDate > item2.Value || item.StartDate < item2.Key && item.EndDate == item2.Value)
                             {
-                                value.Remove(item2.Key);
+                                values2.Remove(item2.Key);
                             }
                             else if (item.StartDate >= item2.Key && item.StartDate <= item2.Value)
                             {
                                 // Exception is in-range of caltimes
                                 if (item.StartDate == item2.Key && item.EndDate > item2.Key && item.EndDate < item2.Value)
                                 {
-                                    value.Remove(item2.Key);
-                                    value.Add(item.EndDate, item2.Value);
+                                    values2.Remove(item2.Key);
+                                    values2.Add(item.EndDate, item2.Value);
                                 }
                                 else if (item.StartDate > item2.Key && item.EndDate == item2.Value)
                                 {
-                                    value[item2.Key] = item.EndDate;
+                                    values2[item2.Key] = item.EndDate;
                                 }
                                 else if (item.StartDate > item2.Key && item.EndDate >= item2.Value)
                                 {
-                                    value[item2.Key] = item.EndDate;
+                                    values2[item2.Key] = item.EndDate;
                                 }
                                 else
                                 {
-                                    value[item2.Key] = item.StartDate;
-                                    value.Add(item.EndDate, item2.Value);
+                                    values2[item2.Key] = item.StartDate;
+                                    values2.Add(item.EndDate, item2.Value);
                                 }
                             }
                             else if (item.StartDate < item2.Key && item.EndDate > item2.Key && item.EndDate < item2.Value)
                             {
                                 // Exception starting before caltime and ending inside it
-                                value.Remove(item2.Key);
-                                value.Add(item.EndDate, item2.Value);
+                                values2.Remove(item2.Key);
+                                values2.Add(item.EndDate, item2.Value);
                             }
                             else if (item.StartDate > item2.Key && item.StartDate < item2.Value && item.EndDate > item2.Value)
                             {
                                 // Exception starting inside caltime and ending outside it
-                                value[item2.Key] = item.StartDate;
+                                values2[item2.Key] = item.StartDate;
                             }
                         }
                     }
@@ -116,15 +134,43 @@ namespace ParkingManagement.Domain.Services.v1
                             }
                             else
                             {
-                                List<TimeSlotDTO> childrens = new();
-                                foreach (var item1 in item.Value)
+                                List<DateSlotDTO> childrens = new();
+
+                                foreach (var item1 in item.Value.AvailableSlot)
                                 {
-                                    TimeSlotDTO child = new TimeSlotDTO();
-                                    child.StartDate = item1.Key;
-                                    child.EndDate = item1.Value;
-                                    childrens.Add(child);
+                                    DateSlotDTO child = new DateSlotDTO();
+                                    child.AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>();
+                                    child.AvailableSlot.TryGetValue(item1.Key, out var data);
+                                    if (data != null)
+                                    {
+                                        //child.AvailableSlot[item1.Key].Add(new TimeSlotDTO { StartDate = item1. })
+                                    }
+                                    else
+                                    {
+                                        foreach (var item2 in item1.Value)
+                                        {
+                                            child.AvailableSlot.TryGetValue(item1.Key, out var gh);
+                                            if (gh == null)
+                                            {
+                                                child.AvailableSlot.Add(item1.Key, new List<TimeSlotDTO>());
+                                            }
+                                            child.AvailableSlot[item1.Key].Add(new TimeSlotDTO { StartDate = item2.Key, EndDate = item2.Value });
+                                        }
+
+
+                                        childrens.Add(child);
+                                        parent.AvailableParkingCards.TryGetValue(item.Key, out var ty);
+                                        if (ty == null)
+                                        {
+                                            parent.AvailableParkingCards.Add(item.Key, childrens);
+
+                                        }
+                                        else
+                                        {
+                                            parent.AvailableParkingCards[item.Key] = ty;
+                                        }
+                                    }
                                 }
-                                parent.AvailableParkingCards.Add(item.Key, childrens);
                             }
                         }
                     }
@@ -133,7 +179,6 @@ namespace ParkingManagement.Domain.Services.v1
                 return new BaseResponse<AvailableParkingCardDTO>(parent);
             }
             return new BaseResponse<AvailableParkingCardDTO>(response.Message, response.StatusCode);
-
         }
 
         private static (DateTime start, DateTime end) GetPArkingSchedule()
@@ -229,9 +274,29 @@ namespace ParkingManagement.Domain.Services.v1
             return new BaseResponse<ParkingCardDTO>(response.Message, response.StatusCode);
         }
 
+        /// <summary>
+        /// This functions gets booked parking card history
+        /// </summary>
+        /// <returns>BaseResponse/returns>
         public async Task<BaseResponse<List<ParkingCardDTO>>> GetBookedParkingCardHistory()
         {
             BaseResponse<List<ParkingCard>> response = await _repo.GetBookedParkingCardHistory().ConfigureAwait(false);
+            if (response.IsSuccessStatusCode())
+            {
+                List<ParkingCardDTO> mappedResponse = _mapper.Map<List<ParkingCard>, List<ParkingCardDTO>>(response.Resource);
+                return new BaseResponse<List<ParkingCardDTO>>(mappedResponse);
+            }
+            return new BaseResponse<List<ParkingCardDTO>>(response.Message, response.StatusCode);
+        }
+
+        /// <summary>
+        /// This function gets booked parking card history for user
+        /// </summary>
+        /// <param name="userId">Specify userid</param>
+        /// <returns>BaseResponse</returns>
+        public async Task<BaseResponse<List<ParkingCardDTO>>> GetBookedParkingCardHistoryForUser(int userId)
+        {
+            BaseResponse<List<ParkingCard>> response = await _repo.GetBookedParkingCardHistoryForUser(userId).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
                 List<ParkingCardDTO> mappedResponse = _mapper.Map<List<ParkingCard>, List<ParkingCardDTO>>(response.Resource);

@@ -18,11 +18,12 @@ namespace ParkingManagement.Controllers
         /// This function returns list of all parking card available in database
         /// </summary>
         /// <param name="startDate">Specify start date</param>
+        /// <param name="endDate">Specify start date</param>
         /// <returns>BaseResponse with list of parking card</returns>
         /// <response code="200">Successfully get all parking card</response>
         /// <response code="204">Content Not Available</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet("ParkingCardsAvailable/{startDate}")]
+        [HttpGet("ParkingCardsAvailable/{startDate}/{endDate}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -123,6 +124,23 @@ namespace ParkingManagement.Controllers
         public async Task<ActionResult<List<ParkingCardDTO>>> GetBookedParkingCardHistory()
         {
             BaseResponse<List<ParkingCardDTO>> response = await _service.GetBookedParkingCardHistory().ConfigureAwait(false);
+            return ReplyBaseResponse(response);
+        }
+
+        /// <summary>
+        /// This function returns booked parking card history for user
+        /// </summary>
+        /// <returns>BaseResponse with UserDto</returns>
+        /// <response code="200">Successfully get the parking card with Id</response>
+        /// <response code="404">parking card with the given Id not found</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("BookedParkingCardForUser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<ParkingCardDTO>>> GetBookedParkingCardHistoryForUser(int userId)
+        {
+            BaseResponse<List<ParkingCardDTO>> response = await _service.GetBookedParkingCardHistoryForUser(userId).ConfigureAwait(false);
             return ReplyBaseResponse(response);
         }
     }

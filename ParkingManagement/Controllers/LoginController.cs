@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using ParkingManagement.Domain.DTO;
+using ParkingManagement.Domain.Dtos;
 using ParkingManagement.Domain.Services.v1;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -25,17 +27,17 @@ namespace ParkingManagement.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginModel model)
         {
-            // Here you would normally validate the username and password against your data source (e.g., a database)
-            if (IsValidUser(model.email, model.Password))
+            var user = IsValidUser(model.email, model.Password);
+            if (user != null)
             {
                 var token = GenerateJwtToken(model.email);
-                return Ok(new { token });
+                return Ok(new LoginResponseDTO() { User = user, Token = token});
             }
 
             return Unauthorized();
         }
 
-        private bool IsValidUser(string username, string password)
+        private UserDto IsValidUser(string username, string password)
         {
             return _service.IsValidUser(username, password);
         }

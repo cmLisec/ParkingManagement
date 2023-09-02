@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ParkingManagement;
@@ -11,9 +12,10 @@ using ParkingManagement;
 namespace ParkingManagement.Domain.Migrations.Postgres
 {
     [DbContext(typeof(ParkingManagementDBContext))]
-    partial class ParkingManagementDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230830175348_addexpensehistory")]
+    partial class addexpensehistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,31 +183,6 @@ namespace ParkingManagement.Domain.Migrations.Postgres
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("ParkingManagement.Domain.Models.PaymentTransaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("PayeeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PayerId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PaymentTransaction");
-                });
-
             modelBuilder.Entity("ParkingManagement.Domain.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -246,6 +223,38 @@ namespace ParkingManagement.Domain.Migrations.Postgres
                     b.HasKey("Id");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("ParkingManagement.Domain.Models.UserPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("OwedAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserPayments");
                 });
 
             modelBuilder.Entity("ParkingManagement.Domain.Models.ExpenseHistory", b =>
@@ -300,7 +309,7 @@ namespace ParkingManagement.Domain.Migrations.Postgres
             modelBuilder.Entity("ParkingManagement.Domain.Models.Payments", b =>
                 {
                     b.HasOne("ParkingManagement.Domain.Models.User", "PayerUser")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("PayerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -308,9 +317,28 @@ namespace ParkingManagement.Domain.Migrations.Postgres
                     b.Navigation("PayerUser");
                 });
 
-            modelBuilder.Entity("ParkingManagement.Domain.Models.User", b =>
+            modelBuilder.Entity("ParkingManagement.Domain.Models.UserPayment", b =>
                 {
-                    b.Navigation("Payments");
+                    b.HasOne("ParkingManagement.Domain.Models.Payments", "Payment")
+                        .WithMany("UserPayments")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ParkingManagement.Domain.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ParkingManagement.Domain.Models.Payments", b =>
+                {
+                    b.Navigation("UserPayments");
                 });
 #pragma warning restore 612, 618
         }

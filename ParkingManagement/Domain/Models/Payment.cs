@@ -15,6 +15,5 @@ namespace ParkingManagement.Domain.Models
         public User PayerUser { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
-        public ICollection<UserPayment> UserPayments { get; set; }
     }
 }

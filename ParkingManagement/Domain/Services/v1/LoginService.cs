@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using ParkingManagement.Controllers.OutputObject;
+using ParkingManagement.Domain.Dtos;
+using ParkingManagement.Domain.Models;
 using ParkingManagement.Domain.Repositories.v1;
 
 namespace ParkingManagement.Domain.Services.v1
@@ -13,9 +16,15 @@ namespace ParkingManagement.Domain.Services.v1
             _mapper = mapper;
         }
 
-        public bool IsValidUser(string username, string password)
+        public UserDto IsValidUser(string username, string password)
         {
-            return _repo.IsValidUser(username, password);
+            User response = _repo.IsValidUser(username, password);
+            if (response != null)
+            {
+                UserDto mappedResponse = _mapper.Map<User, UserDto>(response);
+                return mappedResponse;
+            }
+            return null;
         }
     }
 }

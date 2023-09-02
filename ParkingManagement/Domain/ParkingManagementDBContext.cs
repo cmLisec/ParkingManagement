@@ -16,7 +16,9 @@ namespace ParkingManagement
 
         public virtual DbSet<CardDetails> CardDetails { get; set; }
         public DbSet<Payments> Payments { get; set; }
-        public DbSet<UserPayment> UserPayments { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransaction { get; set; }
+        public DbSet<ExpenseHistory> ExpenseHistories { get; set; }
+        public DbSet<SettleUpHistory> SettleUpHistories { get; set; }
         public ParkingManagementDBContext(DbContextOptions<ParkingManagementDBContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

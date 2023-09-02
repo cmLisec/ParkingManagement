@@ -49,6 +49,8 @@ namespace ParkingManagement.Domain.Models
         /// </summary>
         public DateTime UpdatedDate { get; set; }
 
+        public virtual List<Payments> Payments { get; set; }  
+
         //[InverseProperty("UserIdNavigation")]
         //public virtual ICollection<ParkingCard> ParkingCard { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ParkingManagement.Controllers.OutputObject;
+using ParkingManagement.Domain.DTO;
 using ParkingManagement.Domain.Models;
 
 namespace ParkingManagement.Domain.Repositories.v1
@@ -15,10 +16,83 @@ namespace ParkingManagement.Domain.Repositories.v1
             Payments PaymentEntity = await GetContext().Payments.FirstOrDefaultAsync(i => i.Id == PaymentToAdded.Id).ConfigureAwait(false);
             if (PaymentEntity != null)
                 return new BaseResponse<Payments>("", StatusCodes.Status409Conflict);
-
+            PaymentToAdded.CreatedDate =DateTime.UtcNow;
+            PaymentToAdded.ModifiedDate = DateTime.UtcNow;
+            var expenseHistoryEntity = new ExpenseHistory()
+            {
+                PayerUserId = PaymentToAdded.PayerUserId,
+                Amount = PaymentToAdded.Amount,
+                Date = PaymentToAdded.Date,
+                CreatedDate = DateTime.UtcNow,
+                ModifiedDate = DateTime.UtcNow,
+            };
+            //var userPayment = new UserPayment()
+            //{
+            //    PaymentId = PaymentToAdded.Id,
+            //    UserId = PaymentToAdded.PayerUserId,
+            //    CreatedDate = DateTime.UtcNow,
+            //    ModifiedDate = DateTime.UtcNow        
+            //};
             GetContext().Payments.Add(PaymentToAdded);
+            GetContext().ExpenseHistories.Add(expenseHistoryEntity);
+            //GetContext().UserPayments.Add(userPayment);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<Payments>(PaymentToAdded);
+        }
+        public async Task<BaseResponse<List<ExpenseHistory>>> GetAllExpenseAsync()
+        {
+            List<ExpenseHistory> ExpenseList = await GetContext().ExpenseHistories.ToListAsync().ConfigureAwait(false);
+            if (ExpenseList.Count <= 0)
+                return new BaseResponse<List<ExpenseHistory>>("", StatusCodes.Status204NoContent);
+            return new BaseResponse<List<ExpenseHistory>>(ExpenseList);
+        }
+        public async Task<BaseResponse<SettleUpHistory>> AddSettleUpAsync(SettleUpHistory settleUp)
+        {
+            if (settleUp == null) return new BaseResponse<SettleUpHistory>("", StatusCodes.Status400BadRequest);
+            SettleUpHistory settleUpEntity = await GetContext().SettleUpHistories.FirstOrDefaultAsync(i => i.Id == settleUp.Id).ConfigureAwait(false);
+            if (settleUpEntity != null)
+                return new BaseResponse<SettleUpHistory>("", StatusCodes.Status409Conflict);
+            settleUp.CreatedDate = DateTime.UtcNow;
+            settleUp.ModifiedDate = DateTime.UtcNow;
+
+            GetContext().SettleUpHistories.Add(settleUp);
+            await CompleteAsync().ConfigureAwait(false);
+            return new BaseResponse<SettleUpHistory>(settleUp);
+        }
+
+        public async Task<BaseResponse<List<SettleUp>>> GetSettleUpDetailsAsync(int userId)
+        {
+            var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
+            var users = GetContext().User.Include(u => u.Payments).ToList();
+            var settlements = new List<SettleUp>();
+            // Calculate the total amount paid by the current user
+            decimal totalPaidByCurrentUser = currentUser.Payments.Sum(p => p.Amount);
+
+            // Calculate the total amount received by the current user from others
+            decimal totalReceivedByCurrentUser = GetContext().PaymentTransaction
+                .Where(t => t.PayeeId == userId)
+                .Sum(t => t.Amount);
+
+            // Calculate the net amount that the current user owes or is owed
+            decimal netBalance = totalReceivedByCurrentUser - totalPaidByCurrentUser;
+
+            // Calculate the amount to be divided equally among other users
+            decimal amountToDivide = totalPaidByCurrentUser / (users.Count - 1);
+
+            foreach (var user in users)
+            {
+                if (user.Id != userId)
+                {
+                    // Calculate the balance for each user
+                    decimal balance = user.Payments.Sum(p => p.Amount) - amountToDivide;
+
+                    // Adjust the balance based on the net balance
+                    balance += netBalance / (users.Count - 1);
+
+                    settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
+                }
+            }
+            return new BaseResponse<List<SettleUp>>(settlements);
         }
     }
 }

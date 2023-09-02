@@ -89,11 +89,11 @@ namespace ParkingManagement.Domain.Repositories.v1
             return new BaseResponse<User>(UserEntity);
         }
 
-        public bool IsValidUser(string username, string password)
+        public User IsValidUser(string username, string password)
         {
             User UserEntity = GetContext().User.FirstOrDefault(i => i.Email == username && i.Password == password);
-            if (UserEntity != null) return true;
-            return false;
+            if (UserEntity != null) return UserEntity;
+            return null; 
         }
     }
 }

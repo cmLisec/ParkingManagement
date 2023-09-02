@@ -29,6 +29,10 @@ namespace ParkingManagement
             AllowNullCollections = true;
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<ParkingCard, ParkingCardDTO>().ReverseMap();
+            CreateMap<ExpenseHistoryDTO, ExpenseHistory>().ReverseMap();
+            CreateMap<Payments, PaymentDTO>().ReverseMap();
+            CreateMap<SettleUpHistory, SettleUpHistoryDTO>().ReverseMap();
+            CreateMap<SettleUp, SettleUpDTO>().ReverseMap();
             CreateMap<CardDetails, CardDetailsDTO>().ReverseMap();
         }
     }

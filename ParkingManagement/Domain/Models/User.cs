@@ -49,7 +49,11 @@ namespace ParkingManagement.Domain.Models
         /// </summary>
         public DateTime UpdatedDate { get; set; }
 
-        public virtual List<Payments> Payments { get; set; }  
+        public virtual List<Payments> Payments { get; set; }
+        /// <summary>
+        /// Specify Device Id
+        /// </summary>
+        public string DeviceId { get; set; }
 
         //[InverseProperty("UserIdNavigation")]
         //public virtual ICollection<ParkingCard> ParkingCard { get; set; }

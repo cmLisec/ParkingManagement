@@ -92,7 +92,8 @@ namespace ParkingManagement.Domain.Repositories.v1
         public User IsValidUser(string username, string password)
         {
             User UserEntity = GetContext().User.FirstOrDefault(i => i.Email == username && i.Password == password);
-            if (UserEntity != null) return UserEntity;
+            if (UserEntity != null)
+                return UserEntity;
             return null; 
         }
     }

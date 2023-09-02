@@ -56,5 +56,15 @@ namespace ParkingManagement.Controllers
             BaseResponse<List<SettleUpDTO>> response = await _service.GetSettleUpDetailsAsync(userId).ConfigureAwait(false);
             return ReplyBaseResponse(response);
         }
+
+        [HttpGet("transactions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<TransactionDTO>>> GetTransactionDetailsAsync(int userId)
+        {
+            BaseResponse<List<TransactionDTO>> response = await _service.GetTransactionDetailsAsync(userId).ConfigureAwait(false);
+            return ReplyBaseResponse(response);
+        }
     }
 }

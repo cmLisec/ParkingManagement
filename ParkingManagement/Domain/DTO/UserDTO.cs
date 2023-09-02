@@ -44,5 +44,9 @@ namespace ParkingManagement.Domain.Dtos
         /// Specify updated date
         /// </summary>
         public DateTime UpdatedDate { get; set; }
+        /// <summary>
+        /// Specify Device Id
+        /// </summary>
+        public string DeviceId { get; set;}
     }
 }

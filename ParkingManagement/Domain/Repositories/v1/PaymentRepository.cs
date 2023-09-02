@@ -94,5 +94,53 @@ namespace ParkingManagement.Domain.Repositories.v1
             }
             return new BaseResponse<List<SettleUp>>(settlements);
         }
+        public async Task<BaseResponse<List<TransactionDTO>>> GetTransactionDetailsAsync(int userId)
+        {
+            var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
+            var users = GetContext().User.ToList();
+            var transactions = new List<TransactionDTO>();
+
+            if (currentUser != null)
+            {
+                var paidByCurrentUser = currentUser.Payments.ToList();
+                if (paidByCurrentUser != null)
+                {
+                    foreach (var payment in paidByCurrentUser) 
+                    {
+                        transactions.Add(new TransactionDTO()
+                        {
+                            Amount = payment.Amount,
+                            Date = payment.Date,
+                            IsPayment = true,
+                            PayedBy = null
+                        });
+                    }
+                }
+
+            }
+
+            var receivedByCurrentUser = GetContext().PaymentTransaction
+                .Where(t => t.PayeeId == userId).ToList();
+            if (receivedByCurrentUser != null)
+            {
+               foreach (var payment in receivedByCurrentUser)
+               {
+                   var payedUser = users.FirstOrDefault(u => u.Id.Equals(payment.PayerId));
+                    if (payedUser != null)
+                    {
+                        transactions.Add(new TransactionDTO()
+                        {
+                            Amount = payment.Amount,
+                            Date = payment.CreatedDate,
+                            IsPayment = false,
+                            PayedBy = payedUser.Name
+                        });
+                    }
+               }
+            }
+            if (!transactions.Any())
+                return new BaseResponse<List<TransactionDTO>>("no transaction history", StatusCodes.Status204NoContent);
+            return new BaseResponse<List<TransactionDTO>>(transactions);
+        }
     }
 }

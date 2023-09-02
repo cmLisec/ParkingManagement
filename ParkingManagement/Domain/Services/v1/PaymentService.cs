@@ -71,5 +71,10 @@ namespace ParkingManagement.Domain.Services.v1
             }
             return new BaseResponse<List<SettleUpDTO>>(response.Message, response.StatusCode);
         }
+
+        public async Task<BaseResponse<List<TransactionDTO>>> GetTransactionDetailsAsync(int userId)
+        {
+          return await _repo.GetTransactionDetailsAsync(userId).ConfigureAwait(false);
+        }
     }
 }

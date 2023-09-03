@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ParkingManagement.Domain.DTO
+﻿namespace ParkingManagement.Domain.DTO
 {
     public class SettleUpHistoryDTO
     {

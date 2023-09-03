@@ -6,6 +6,5 @@
         /// AvailableParkingCards
         /// </summary>
         public Dictionary<int, List<DateSlotDTO>> AvailableParkingCards { get; set; }
-
     }
 }

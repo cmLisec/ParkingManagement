@@ -36,7 +36,8 @@ namespace ParkingManagement.Controllers
         /// <summary>
         /// This function returns parking card by its Id
         /// </summary>
-        /// <param name="id">Specify Id of parking card</param>
+        /// <param name="id">Specify Id</param>
+        /// <param name="userId">Specify user id</param>
         /// <returns>BaseResponse with UserDto</returns>
         /// <response code="200">Successfully get the parking card with Id</response>
         /// <response code="404">parking card with the given Id not found</response>

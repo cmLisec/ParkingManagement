@@ -1,6 +1,4 @@
-﻿using ParkingManagement.Domain.Dtos;
-
-namespace ParkingManagement.Domain.Models
+﻿namespace ParkingManagement.Domain.Models
 {
     public class SettleUp
     {

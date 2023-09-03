@@ -16,7 +16,7 @@ namespace ParkingManagement.Domain.Repositories.v1
             Payments PaymentEntity = await GetContext().Payments.FirstOrDefaultAsync(i => i.Id == PaymentToAdded.Id).ConfigureAwait(false);
             if (PaymentEntity != null)
                 return new BaseResponse<Payments>("", StatusCodes.Status409Conflict);
-            PaymentToAdded.CreatedDate =DateTime.UtcNow;
+            PaymentToAdded.CreatedDate = DateTime.UtcNow;
             PaymentToAdded.ModifiedDate = DateTime.UtcNow;
             var expenseHistoryEntity = new ExpenseHistory()
             {
@@ -64,7 +64,6 @@ namespace ParkingManagement.Domain.Repositories.v1
         {
             var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
             var users = GetContext().User.Include(u => u.Payments).ToList();
-            var transactions = GetContext().PaymentTransaction.ToList();
             var settlements = new List<SettleUp>();
             // Calculate the total amount paid by the current user
             decimal totalPaidByCurrentUser = currentUser.Payments.Sum(p => p.Amount);
@@ -78,20 +77,17 @@ namespace ParkingManagement.Domain.Repositories.v1
             decimal netBalance = totalReceivedByCurrentUser - totalPaidByCurrentUser;
 
             // Calculate the amount to be divided equally among other users
-            decimal amountToDivide = netBalance / (users.Count);
+            decimal amountToDivide = totalPaidByCurrentUser / (users.Count - 1);
 
             foreach (var user in users)
             {
                 if (user.Id != userId)
                 {
-                    decimal totalReceivedByUser = transactions.Where(t => t.PayeeId == user.Id)
-                                                              .Sum(t => t.Amount);
-                    decimal netBalanceForUser = totalReceivedByUser - user.Payments.Sum(p => p.Amount);
-
-                    // Calculate the amount to be divided equally among other users
-                    decimal amountToDivideForUser = netBalanceForUser / (users.Count);
                     // Calculate the balance for each user
-                    decimal balance = amountToDivide - amountToDivideForUser;
+                    decimal balance = user.Payments.Sum(p => p.Amount) - amountToDivide;
+
+                    // Adjust the balance based on the net balance
+                    balance += netBalance / (users.Count - 1);
 
                     settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
                 }
@@ -109,7 +105,7 @@ namespace ParkingManagement.Domain.Repositories.v1
                 var paidByCurrentUser = currentUser.Payments.ToList();
                 if (paidByCurrentUser != null)
                 {
-                    foreach (var payment in paidByCurrentUser) 
+                    foreach (var payment in paidByCurrentUser)
                     {
                         transactions.Add(new TransactionDTO()
                         {
@@ -127,9 +123,9 @@ namespace ParkingManagement.Domain.Repositories.v1
                 .Where(t => t.PayeeId == userId).ToList();
             if (receivedByCurrentUser != null)
             {
-               foreach (var payment in receivedByCurrentUser)
-               {
-                   var payedUser = users.FirstOrDefault(u => u.Id.Equals(payment.PayerId));
+                foreach (var payment in receivedByCurrentUser)
+                {
+                    var payedUser = users.FirstOrDefault(u => u.Id.Equals(payment.PayerId));
                     if (payedUser != null)
                     {
                         transactions.Add(new TransactionDTO()
@@ -140,7 +136,7 @@ namespace ParkingManagement.Domain.Repositories.v1
                             PayedBy = payedUser.Name
                         });
                     }
-               }
+                }
             }
             if (!transactions.Any())
                 return new BaseResponse<List<TransactionDTO>>("no transaction history", StatusCodes.Status204NoContent);

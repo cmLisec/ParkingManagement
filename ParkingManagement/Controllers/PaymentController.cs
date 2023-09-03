@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.DTO;
-using ParkingManagement.Domain.Dtos;
 using ParkingManagement.Domain.Services.v1;
 
 namespace ParkingManagement.Controllers

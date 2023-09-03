@@ -41,11 +41,26 @@ namespace ParkingManagement.Domain.Services.v1
                         date.start = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.start.Hour, date.start.Minute, date.start.Second);
                         date.end = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.end.Hour, date.end.Minute, date.end.Second);
 
-                        DefaultParkingSlot(cardCount, availableParkingCard, date);
+                        ParkingCardUtility.DefaultParkingSlot(cardCount, availableParkingCard, date);
                     }
                 }
                 else
                 {
+                    for (DateTime dateTime = startDate.Date; dateTime <= endDate.Date; dateTime = dateTime.AddDays(1))
+                    {
+                        var parkingSlotAvailable = response.Resource.Where(x => x.StartDate.Date.Day == dateTime.Date.Day);
+                        if (parkingSlotAvailable.Any())
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            date.start = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.start.Hour, date.start.Minute, date.start.Second);
+                            date.end = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.end.Hour, date.end.Minute, date.end.Second);
+
+                            ParkingCardUtility.DefaultParkingSlot(cardCount, availableParkingCard, date);
+                        }
+                    }
                     Dictionary<int, AvailableDateSlotsModel> availableParkingCards = new();
 
                     ParkingCardUtility.CalculationForAvailableParkingSlots(response, date, availableParkingCards);
@@ -58,30 +73,7 @@ namespace ParkingManagement.Domain.Services.v1
             return new BaseResponse<AvailableParkingCardDTO>(response.Message, response.StatusCode);
         }
 
-        private static void DefaultParkingSlot(BaseResponse<int> cardCount, AvailableParkingCardDTO availableParkingCard, (DateTime start, DateTime end) date)
-        {
-            for (int i = 1; i <= cardCount.Resource; i++)
-            {
-                List<DateSlotDTO> children = new();
-                DateSlotDTO child = new()
-                {
-                    AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>
-                        {
-                            { date.start, new List<TimeSlotDTO> { new TimeSlotDTO() { StartDate = date.start, EndDate = date.end } } }
-                        }
-                };
-                children.Add(child);
-                availableParkingCard.AvailableParkingCards.TryGetValue(i, out var parkingCard);
-                if (parkingCard != null)
-                {
-                    availableParkingCard.AvailableParkingCards[i].Add(child);
-                }
-                else
-                {
-                    availableParkingCard.AvailableParkingCards.Add(i, children);
-                }
-            }
-        }
+
 
         /// <summary>
         /// This function returns parking card based on Id

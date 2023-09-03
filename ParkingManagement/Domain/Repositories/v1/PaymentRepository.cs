@@ -64,6 +64,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         {
             var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
             var users = GetContext().User.Include(u => u.Payments).ToList();
+            var transactions = GetContext().PaymentTransaction.ToList();
             var settlements = new List<SettleUp>();
             // Calculate the total amount paid by the current user
             decimal totalPaidByCurrentUser = currentUser.Payments.Sum(p => p.Amount);
@@ -77,17 +78,20 @@ namespace ParkingManagement.Domain.Repositories.v1
             decimal netBalance = totalReceivedByCurrentUser - totalPaidByCurrentUser;
 
             // Calculate the amount to be divided equally among other users
-            decimal amountToDivide = totalPaidByCurrentUser / (users.Count - 1);
+            decimal amountToDivide = netBalance / (users.Count);
 
             foreach (var user in users)
             {
                 if (user.Id != userId)
                 {
-                    // Calculate the balance for each user
-                    decimal balance = user.Payments.Sum(p => p.Amount) - amountToDivide;
+                    decimal totalReceivedByUser = transactions.Where(t => t.PayeeId == user.Id)
+                                                              .Sum(t => t.Amount);
+                    decimal netBalanceForUser = totalReceivedByUser - user.Payments.Sum(p => p.Amount);
 
-                    // Adjust the balance based on the net balance
-                    balance += netBalance / (users.Count - 1);
+                    // Calculate the amount to be divided equally among other users
+                    decimal amountToDivideForUser = netBalanceForUser / (users.Count);
+                    // Calculate the balance for each user
+                    decimal balance = amountToDivide - amountToDivideForUser;
 
                     settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
                 }

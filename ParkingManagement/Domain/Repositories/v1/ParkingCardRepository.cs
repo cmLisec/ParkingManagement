@@ -75,6 +75,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> AddParkingCardAsync(List<ParkingCard> parkingCard)
         {
+            parkingCard.ForEach(x => x.CreatedAt = DateTime.Now);
             GetContext().ParkingCard.AddRange(parkingCard);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<List<ParkingCard>>(parkingCard);

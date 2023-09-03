@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ParkingManagement.Domain.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace ParkingManagement.Domain.DTO
 {
@@ -36,5 +37,7 @@ namespace ParkingManagement.Domain.DTO
 
         [Required]
         public int CardId { get; set; }
+
+        public UserDto User { get; set; }
     }
 }

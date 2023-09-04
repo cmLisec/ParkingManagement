@@ -64,14 +64,14 @@ namespace ParkingManagement.Domain.Repositories.v1
         {
             var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
             var users = GetContext().User.Include(u => u.Payments).ToList();
-            var transactions = GetContext().PaymentTransaction.ToList();
+            var transactions = GetContext().SettleUpHistories.ToList();
             var settlements = new List<SettleUp>();
             // Calculate the total amount paid by the current user
             decimal totalPaidByCurrentUser = currentUser.Payments.Sum(p => p.Amount);
 
             // Calculate the total amount received by the current user from others
-            decimal totalReceivedByCurrentUser = GetContext().PaymentTransaction
-                .Where(t => t.PayeeId == userId)
+            decimal totalReceivedByCurrentUser = GetContext().SettleUpHistories
+                .Where(t => t.ReceiverUserId == userId)
                 .Sum(t => t.Amount);
 
             // Calculate the net amount that the current user owes or is owed
@@ -84,7 +84,7 @@ namespace ParkingManagement.Domain.Repositories.v1
             {
                 if (user.Id != userId)
                 {
-                    decimal totalReceivedByUser = transactions.Where(t => t.PayeeId == user.Id)
+                    decimal totalReceivedByUser = transactions.Where(t => t.ReceiverUserId == user.Id)
                                                               .Sum(t => t.Amount);
                     decimal netBalanceForUser = totalReceivedByUser - user.Payments.Sum(p => p.Amount);
 

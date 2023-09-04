@@ -31,7 +31,12 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistory()
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate == DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate.Date.Day == DateTime.Now.Date.Day).ToListAsync().ConfigureAwait(false);
+            foreach (var data in parkingCard)
+            {
+                data.StartDate = data.StartDate.ToUniversalTime();
+                data.EndDate = data.EndDate.ToUniversalTime();
+            }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
@@ -42,6 +47,11 @@ namespace ParkingManagement.Domain.Repositories.v1
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistoryForUser(int userId)
         {
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
+            foreach (var data in parkingCard)
+            {
+                data.StartDate = data.StartDate.ToUniversalTime();
+                data.EndDate = data.EndDate.ToUniversalTime();
+            }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 

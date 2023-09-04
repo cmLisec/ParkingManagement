@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ParkingManagement.Controllers.OutputObject;
 using ParkingManagement.Domain.DTO;
-using ParkingManagement.Domain.Dtos;
 using ParkingManagement.Domain.Models;
 using ParkingManagement.Domain.Repositories.v1;
 
@@ -74,7 +73,7 @@ namespace ParkingManagement.Domain.Services.v1
 
         public async Task<BaseResponse<List<TransactionDTO>>> GetTransactionDetailsAsync(int userId)
         {
-          return await _repo.GetTransactionDetailsAsync(userId).ConfigureAwait(false);
+            return await _repo.GetTransactionDetailsAsync(userId).ConfigureAwait(false);
         }
     }
 }

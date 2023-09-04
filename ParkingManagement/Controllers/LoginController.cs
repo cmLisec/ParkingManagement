@@ -31,7 +31,7 @@ namespace ParkingManagement.Controllers
             if (user != null)
             {
                 var token = GenerateJwtToken(model.email);
-                return Ok(new LoginResponseDTO() { User = user, Token = token});
+                return Ok(new LoginResponseDTO() { User = user, Token = token });
             }
 
             return Unauthorized();

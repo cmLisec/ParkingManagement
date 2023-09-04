@@ -47,6 +47,6 @@ namespace ParkingManagement.Domain.Dtos
         /// <summary>
         /// Specify Device Id
         /// </summary>
-        public string DeviceId { get; set;}
+        public string DeviceId { get; set; }
     }
 }

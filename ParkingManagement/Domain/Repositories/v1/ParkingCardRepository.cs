@@ -13,7 +13,6 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <summary>
         /// This function fetch all parking card available from database.
         /// </summary>
-        /// <param name="query">Specify Query Parameter</param>
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetAvailableParkingCardAsync(DateTime startDate, DateTime endDate)
         {
@@ -32,7 +31,12 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistory()
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate.Date.Day == DateTime.Now.Date.Day).ToListAsync().ConfigureAwait(false);
+            foreach (var data in parkingCard)
+            {
+                data.StartDate = data.StartDate.ToUniversalTime();
+                data.EndDate = data.EndDate.ToUniversalTime();
+            }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
@@ -43,13 +47,17 @@ namespace ParkingManagement.Domain.Repositories.v1
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistoryForUser(int userId)
         {
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
+            foreach (var data in parkingCard)
+            {
+                data.StartDate = data.StartDate.ToUniversalTime();
+                data.EndDate = data.EndDate.ToUniversalTime();
+            }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 
         /// <summary>
         /// This function fetch all parking card available from database.
         /// </summary>
-        /// <param name="query">Specify Query Parameter</param>
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<int>> GetAvailableCardDetailsAsync()
         {
@@ -77,8 +85,11 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> AddParkingCardAsync(List<ParkingCard> parkingCard)
         {
-            if (parkingCard.Count == 0) return new BaseResponse<List<ParkingCard>>("Bad request", StatusCodes.Status400BadRequest);
-
+            foreach (var item in parkingCard)
+            {
+                item.CreatedAt = DateTime.Now;
+                item.User = null;
+            }
             GetContext().ParkingCard.AddRange(parkingCard);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<List<ParkingCard>>(parkingCard);
@@ -91,12 +102,11 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<ParkingCard>> UpdateParkingCardAsync(ParkingCard parkingCardUpdate)
         {
-            if (parkingCardUpdate == null) return new BaseResponse<ParkingCard>("Bad request", StatusCodes.Status400BadRequest);
-
             ParkingCard parkingCard = await GetContext().ParkingCard.AsNoTracking().SingleOrDefaultAsync(i => i.Id == parkingCardUpdate.Id && i.UserId == parkingCardUpdate.UserId).ConfigureAwait(false);
             if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Parking card not found", StatusCodes.Status404NotFound);
-
+            parkingCardUpdate.CreatedAt = DateTime.Now;
+            parkingCardUpdate.User = null;
             GetContext().ParkingCard.Update(parkingCardUpdate);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<ParkingCard>(parkingCardUpdate);

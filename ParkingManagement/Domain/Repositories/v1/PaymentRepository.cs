@@ -78,7 +78,7 @@ namespace ParkingManagement.Domain.Repositories.v1
             decimal netBalance = totalReceivedByCurrentUser - totalPaidByCurrentUser;
 
             // Calculate the amount to be divided equally among other users
-            decimal amountToDivide = totalPaidByCurrentUser / (users.Count - 1);
+            decimal amountToDivide = netBalance / (users.Count);
 
             foreach (var user in users)
             {
@@ -88,8 +88,10 @@ namespace ParkingManagement.Domain.Repositories.v1
                                                               .Sum(t => t.Amount);
                     decimal netBalanceForUser = totalReceivedByUser - user.Payments.Sum(p => p.Amount);
 
-                    // Adjust the balance based on the net balance
-                    balance += netBalance / (users.Count - 1);
+                    // Calculate the amount to be divided equally among other users
+                    decimal amountToDivideForUser = netBalanceForUser / (users.Count);
+                    // Calculate the balance for each user
+                    decimal balance = amountToDivide - amountToDivideForUser;
 
                     settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
                 }

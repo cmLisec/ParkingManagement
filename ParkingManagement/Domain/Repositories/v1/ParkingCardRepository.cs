@@ -75,7 +75,11 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> AddParkingCardAsync(List<ParkingCard> parkingCard)
         {
-            parkingCard.ForEach(x => x.CreatedAt = DateTime.Now);
+            foreach (var item in parkingCard)
+            {
+                item.CreatedAt = DateTime.Now;
+                item.User = null;
+            }
             GetContext().ParkingCard.AddRange(parkingCard);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<List<ParkingCard>>(parkingCard);
@@ -91,7 +95,8 @@ namespace ParkingManagement.Domain.Repositories.v1
             ParkingCard parkingCard = await GetContext().ParkingCard.AsNoTracking().SingleOrDefaultAsync(i => i.Id == parkingCardUpdate.Id && i.UserId == parkingCardUpdate.UserId).ConfigureAwait(false);
             if (parkingCard == null)
                 return new BaseResponse<ParkingCard>("Parking card not found", StatusCodes.Status404NotFound);
-
+            parkingCardUpdate.CreatedAt = DateTime.Now;
+            parkingCardUpdate.User = null;
             GetContext().ParkingCard.Update(parkingCardUpdate);
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<ParkingCard>(parkingCardUpdate);

@@ -1,4 +1,5 @@
-﻿using ParkingManagement.Domain.Dtos;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using ParkingManagement.Domain.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace ParkingManagement.Domain.DTO
@@ -38,6 +39,7 @@ namespace ParkingManagement.Domain.DTO
         [Required]
         public int CardId { get; set; }
 
+        [ValidateNever]
         public UserDto User { get; set; }
     }
 }

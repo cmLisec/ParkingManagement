@@ -31,7 +31,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistory()
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate >= DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate == DateTime.Now.Date).ToListAsync().ConfigureAwait(false);
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
 

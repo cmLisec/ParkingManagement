@@ -15,35 +15,47 @@ namespace ParkingManagement.Domain.Repositories.Utilities
                     availableParkingCardDTO.AvailableParkingCards.TryGetValue(availableParkingCard.Key, out var dateSlotValue);
                     if (dateSlotValue != null)
                     {
+                        var data = availableParkingCard.Value;
+                        foreach (var datas in data.AvailableSlot)
+                        {
+                            foreach (var fg in datas.Value)
+                            {
+                                DateSlotDTO dateSlotDTO = new DateSlotDTO();
+                                dateSlotDTO.AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>();
+                                dateSlotDTO.AvailableSlot.Add(datas.Key, new List<TimeSlotDTO> { new TimeSlotDTO { StartDate = fg.Key, EndDate = fg.Value } });
+                                dateSlotValue.Add(dateSlotDTO);
+                            }
+                        }
+                        //dateSlotValue.Add(new DateSlotDTO { AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>> { } })
                         availableParkingCardDTO.AvailableParkingCards[availableParkingCard.Key] = dateSlotValue;
                     }
                     else
                     {
-                        List<DateSlotDTO> dateSlotList = new();
+                        List<DateSlotDTO> dateSlot = new();
 
                         foreach (var availableSlot in availableParkingCard.Value.AvailableSlot)
                         {
-                            DateSlotDTO dateSlot = new()
+                            DateSlotDTO child = new()
                             {
                                 AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>()
                             };
-                            dateSlot.AvailableSlot.TryGetValue(availableSlot.Key, out var data);
+                            child.AvailableSlot.TryGetValue(availableSlot.Key, out var data);
 
                             foreach (var item2 in availableSlot.Value)
                             {
-                                dateSlot.AvailableSlot.TryGetValue(availableSlot.Key, out var gh);
+                                child.AvailableSlot.TryGetValue(availableSlot.Key, out var gh);
                                 if (gh == null)
                                 {
-                                    dateSlot.AvailableSlot.Add(availableSlot.Key, new List<TimeSlotDTO>());
+                                    child.AvailableSlot.Add(availableSlot.Key, new List<TimeSlotDTO>());
                                 }
-                                dateSlot.AvailableSlot[availableSlot.Key].Add(new TimeSlotDTO { StartDate = item2.Key, EndDate = item2.Value });
+                                child.AvailableSlot[availableSlot.Key].Add(new TimeSlotDTO { StartDate = item2.Key, EndDate = item2.Value });
                             }
 
-                            dateSlotList.Add(dateSlot);
+                            dateSlot.Add(child);
                             availableParkingCardDTO.AvailableParkingCards.TryGetValue(availableParkingCard.Key, out var ty);
                             if (ty == null)
                             {
-                                availableParkingCardDTO.AvailableParkingCards.Add(availableParkingCard.Key, dateSlotList);
+                                availableParkingCardDTO.AvailableParkingCards.Add(availableParkingCard.Key, dateSlot);
                             }
                             else
                             {

@@ -19,8 +19,8 @@ namespace ParkingManagement.Domain.Repositories.v1
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date && x.StartDate.Date <= endDate.Date).OrderBy(x => x.CardId).ToListAsync().ConfigureAwait(false);
             foreach (var data in parkingCard)
             {
-                data.StartDate = data.StartDate.ToUniversalTime();
-                data.EndDate = data.EndDate.ToUniversalTime();
+                data.StartDate = Convert.ToDateTime(data.StartDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
+                data.EndDate = Convert.ToDateTime(data.EndDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
             }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
@@ -34,8 +34,8 @@ namespace ParkingManagement.Domain.Repositories.v1
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.StartDate.Date.Day == DateTime.Now.Date.Day).ToListAsync().ConfigureAwait(false);
             foreach (var data in parkingCard)
             {
-                data.StartDate = data.StartDate.ToUniversalTime();
-                data.EndDate = data.EndDate.ToUniversalTime();
+                data.StartDate = Convert.ToDateTime(data.StartDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
+                data.EndDate = Convert.ToDateTime(data.EndDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
             }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }
@@ -49,8 +49,8 @@ namespace ParkingManagement.Domain.Repositories.v1
             List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
             foreach (var data in parkingCard)
             {
-                data.StartDate = data.StartDate.ToUniversalTime();
-                data.EndDate = data.EndDate.ToUniversalTime();
+                data.StartDate = Convert.ToDateTime(data.StartDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
+                data.EndDate = Convert.ToDateTime(data.EndDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
             }
             return new BaseResponse<List<ParkingCard>>(parkingCard);
         }

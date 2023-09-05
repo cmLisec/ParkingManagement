@@ -48,17 +48,41 @@ namespace ParkingManagement.Domain.Services.v1
                 {
                     for (DateTime dateTime = startDate.Date; dateTime <= endDate.Date; dateTime = dateTime.AddDays(1))
                     {
-                        var parkingSlotAvailable = response.Resource.Where(x => x.StartDate.Date.Day == dateTime.Date.Day);
-                        if (parkingSlotAvailable.Any())
+                        for (int i = 1; i <= cardCount.Resource; i++)
                         {
-                            continue;
-                        }
-                        else
-                        {
-                            date.start = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.start.Hour, date.start.Minute, date.start.Second);
-                            date.end = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.end.Hour, date.end.Minute, date.end.Second);
+                            var parkingSlotAvailable = response.Resource.Where(x => x.StartDate.Date.Day == dateTime.Date.Day && x.CardId == i);
+                            if (parkingSlotAvailable.Any())
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                var defaultStartDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 18, 00, 00);
+                                var defaultEndDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, 09, 00, 00);
+                                List<DateSlotDTO> children = new();
+                                DateSlotDTO child = new()
+                                {
+                                    AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>
+                                {
+                                    { defaultEndDate, new List<TimeSlotDTO> { new TimeSlotDTO() { StartDate = defaultEndDate, EndDate = defaultStartDate } } }
+                                }
+                                };
+                                children.Add(child);
+                                availableParkingCard.AvailableParkingCards.TryGetValue(i, out var parkingCard);
+                                if (parkingCard != null)
+                                {
+                                    availableParkingCard.AvailableParkingCards[i].Add(child);
+                                }
+                                else
+                                {
+                                    availableParkingCard.AvailableParkingCards.Add(i, children);
+                                }
 
-                            ParkingCardUtility.DefaultParkingSlot(cardCount, availableParkingCard, date);
+                                //date.start = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.start.Hour, date.start.Minute, date.start.Second);
+                                //date.end = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.end.Hour, date.end.Minute, date.end.Second);
+
+                                //ParkingCardUtility.DefaultParkingSlot(cardCount, availableParkingCard, date);
+                            }
                         }
                     }
                     Dictionary<int, AvailableDateSlotsModel> availableParkingCards = new();
@@ -101,6 +125,14 @@ namespace ParkingManagement.Domain.Services.v1
         {
             if (parkingCard.Count == 0)
                 return new BaseResponse<List<ParkingCardDTO>>("Bad request", StatusCodes.Status400BadRequest);
+
+            foreach (var parkCard in parkingCard)
+            {
+                if (parkCard.StartDate > parkCard.EndDate)
+                {
+                    return new BaseResponse<List<ParkingCardDTO>>("Bad request", StatusCodes.Status400BadRequest);
+                }
+            }
 
             var parkingCardToAdd = _mapper.Map<List<ParkingCardDTO>, List<ParkingCard>>(parkingCard);
             BaseResponse<List<ParkingCard>> response = await _repo.AddParkingCardAsync(parkingCardToAdd).ConfigureAwait(false);

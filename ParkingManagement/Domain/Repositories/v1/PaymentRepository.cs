@@ -88,9 +88,14 @@ namespace ParkingManagement.Domain.Repositories.v1
                     decimal paidAmount = amountToDivide - totalReceivedByUser;
                     if (paidAmount > 0)
                     {
-                        if(balanceCurrentUserShouldPay > 0)
+                        if (balanceCurrentUserShouldPay > 0)
+                        {
                             balance = balanceCurrentUserShouldPay - (amountToDivide - totalReceivedByUser);
-                        balance = amountToDivide - totalReceivedByUser;
+                        }
+                        else
+                        {
+                            balance = amountToDivide - totalReceivedByUser;
+                        }
                     }
                     settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
                 }

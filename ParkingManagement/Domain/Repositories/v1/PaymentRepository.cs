@@ -127,13 +127,13 @@ namespace ParkingManagement.Domain.Repositories.v1
 
             }
 
-            var receivedByCurrentUser = GetContext().PaymentTransaction
-                .Where(t => t.PayeeId == userId).ToList();
+            var receivedByCurrentUser = GetContext().SettleUpHistories
+                .Where(t => t.ReceiverUserId == userId).ToList();
             if (receivedByCurrentUser != null)
             {
                 foreach (var payment in receivedByCurrentUser)
                 {
-                    var payedUser = users.FirstOrDefault(u => u.Id.Equals(payment.PayerId));
+                    var payedUser = users.FirstOrDefault(u => u.Id.Equals(payment.PayerUserId));
                     if (payedUser != null)
                     {
                         transactions.Add(new TransactionDTO()

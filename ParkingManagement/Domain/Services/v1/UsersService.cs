@@ -50,16 +50,16 @@ namespace ParkingManagement.Domain.Services.v1
         /// <summary>
         /// This function add new  User to database
         /// </summary>
-        /// <param name="User">Specify User</param>
+        /// <param name="user">Specify User</param>
         /// <returns>Baseresponse with UserDto</returns>
-        public async Task<BaseResponse<UserDto>> AddUserAsync(UserDto User)
+        public async Task<BaseResponse<UserDto>> AddUserAsync(UserDto user)
         {
-            if (User == null)
-                return new BaseResponse<UserDto>("", StatusCodes.Status400BadRequest);
+            if (user == null)
+                return new BaseResponse<UserDto>("Bad Request", StatusCodes.Status400BadRequest);
 
 
-            var UserToAdded = _mapper.Map<UserDto, User>(User);
-            BaseResponse<User> response = await _repo.AddUserAsync(UserToAdded).ConfigureAwait(false);
+            var userToAdded = _mapper.Map<UserDto, User>(user);
+            BaseResponse<User> response = await _repo.AddUserAsync(userToAdded).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
                 UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
@@ -73,18 +73,18 @@ namespace ParkingManagement.Domain.Services.v1
         /// This function update existing User
         /// </summary>
         /// <param name="id">Specify Id of User</param>
-        /// <param name="User">Specify User object</param>
+        /// <param name="user">Specify User object</param>
         /// <returns>BaseResponse with UserDto</returns>
-        public async Task<BaseResponse<UserDto>> UpdateUserAsync(int id, UserDto User)
+        public async Task<BaseResponse<UserDto>> UpdateUserAsync(int id, UserDto user)
         {
-            if (User == null)
-                return new BaseResponse<UserDto>("", StatusCodes.Status400BadRequest);
+            if (user == null)
+                return new BaseResponse<UserDto>("Bad Request", StatusCodes.Status400BadRequest);
 
 
-            var UserToUpdate = _mapper.Map<UserDto, User>(User);
-            if (UserToUpdate != null)
-                UserToUpdate.Id = id;
-            BaseResponse<User> response = await _repo.UpdateUserAsync(UserToUpdate).ConfigureAwait(false);
+            var userToUpdate = _mapper.Map<UserDto, User>(user);
+            if (userToUpdate != null)
+                userToUpdate.Id = id;
+            BaseResponse<User> response = await _repo.UpdateUserAsync(userToUpdate).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
                 UserDto mappedResponse = _mapper.Map<User, UserDto>(response.Resource);
@@ -101,7 +101,6 @@ namespace ParkingManagement.Domain.Services.v1
         /// <returns>BaseResponse with UserDto</returns>
         public async Task<BaseResponse<UserDto>> DeleteUserByIdAsync(int id)
         {
-
             BaseResponse<User> response = await _repo.DeleteUserByIdAsync(id);
             if (response.IsSuccessStatusCode())
             {
@@ -110,6 +109,5 @@ namespace ParkingManagement.Domain.Services.v1
             }
             return new BaseResponse<UserDto>(response.Message, response.StatusCode);
         }
-
     }
 }

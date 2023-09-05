@@ -26,7 +26,6 @@ namespace ParkingManagement.Domain.Repositories.Utilities
                                 dateSlotValue.Add(dateSlotDTO);
                             }
                         }
-                        //dateSlotValue.Add(new DateSlotDTO { AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>> { } })
                         availableParkingCardDTO.AvailableParkingCards[availableParkingCard.Key] = dateSlotValue;
                     }
                     else
@@ -86,10 +85,10 @@ namespace ParkingManagement.Domain.Repositories.Utilities
                     availableParkingCards[parkingCard.CardId].AvailableSlot[date.start].Add(date.start, date.end);
                 }
 
-                availableParkingCards.TryGetValue(parkingCard.CardId, out var values1);
-                if (values1 != null)
+                availableParkingCards.TryGetValue(parkingCard.CardId, out var availableParkingCardSlot);
+                if (availableParkingCardSlot != null)
                 {
-                    bool key = values1.AvailableSlot.ContainsKey(date.start);
+                    bool key = availableParkingCardSlot.AvailableSlot.ContainsKey(date.start);
                     if (!key)
                     {
                         availableParkingCards[parkingCard.CardId].AvailableSlot.Add(date.start, new Dictionary<DateTime, DateTime>());
@@ -97,43 +96,43 @@ namespace ParkingManagement.Domain.Repositories.Utilities
                         availableParkingCards[parkingCard.CardId].AvailableSlot[date.start].Add(date.start, date.end);
                     }
                 }
-                values1.AvailableSlot.TryGetValue(date.start, out var values2);
+                availableParkingCardSlot.AvailableSlot.TryGetValue(date.start, out var availableSlotDictionary);
 
-                foreach (var availableSlot in values2.ToList())
+                foreach (var availableSlot in availableSlotDictionary.ToList())
                 {
                     if (parkingCard.StartDate == availableSlot.Key && parkingCard.EndDate >= availableSlot.Value || parkingCard.StartDate < availableSlot.Key && parkingCard.EndDate > availableSlot.Value || parkingCard.StartDate < availableSlot.Key && parkingCard.EndDate == availableSlot.Value)
                     {
-                        values2.Remove(availableSlot.Key);
+                        availableSlotDictionary.Remove(availableSlot.Key);
                     }
                     else if (parkingCard.StartDate >= availableSlot.Key && parkingCard.StartDate <= availableSlot.Value)
                     {
                         if (parkingCard.StartDate == availableSlot.Key && parkingCard.EndDate > availableSlot.Key && parkingCard.EndDate < availableSlot.Value)
                         {
-                            values2.Remove(availableSlot.Key);
-                            values2.Add(parkingCard.EndDate, availableSlot.Value);
+                            availableSlotDictionary.Remove(availableSlot.Key);
+                            availableSlotDictionary.Add(parkingCard.EndDate, availableSlot.Value);
                         }
                         else if (parkingCard.StartDate > availableSlot.Key && parkingCard.EndDate == availableSlot.Value)
                         {
-                            values2[availableSlot.Key] = parkingCard.EndDate;
+                            availableSlotDictionary[availableSlot.Key] = parkingCard.EndDate;
                         }
                         else if (parkingCard.StartDate > availableSlot.Key && parkingCard.EndDate >= availableSlot.Value)
                         {
-                            values2[availableSlot.Key] = parkingCard.EndDate;
+                            availableSlotDictionary[availableSlot.Key] = parkingCard.EndDate;
                         }
                         else
                         {
-                            values2[availableSlot.Key] = parkingCard.StartDate;
-                            values2.Add(parkingCard.EndDate, availableSlot.Value);
+                            availableSlotDictionary[availableSlot.Key] = parkingCard.StartDate;
+                            availableSlotDictionary.Add(parkingCard.EndDate, availableSlot.Value);
                         }
                     }
                     else if (parkingCard.StartDate < availableSlot.Key && parkingCard.EndDate > availableSlot.Key && parkingCard.EndDate < availableSlot.Value)
                     {
-                        values2.Remove(availableSlot.Key);
-                        values2.Add(parkingCard.EndDate, availableSlot.Value);
+                        availableSlotDictionary.Remove(availableSlot.Key);
+                        availableSlotDictionary.Add(parkingCard.EndDate, availableSlot.Value);
                     }
                     else if (parkingCard.StartDate > availableSlot.Key && parkingCard.StartDate < availableSlot.Value && parkingCard.EndDate > availableSlot.Value)
                     {
-                        values2[availableSlot.Key] = parkingCard.StartDate;
+                        availableSlotDictionary[availableSlot.Key] = parkingCard.StartDate;
                     }
                 }
             }
@@ -143,23 +142,23 @@ namespace ParkingManagement.Domain.Repositories.Utilities
         {
             for (int i = 1; i <= cardCount.Resource; i++)
             {
-                List<DateSlotDTO> children = new();
-                DateSlotDTO child = new()
+                List<DateSlotDTO> dateSlotList = new();
+                DateSlotDTO dateSlot = new()
                 {
                     AvailableSlot = new Dictionary<DateTime, List<TimeSlotDTO>>
                         {
                             { date.start, new List<TimeSlotDTO> { new TimeSlotDTO() { StartDate = date.start, EndDate = date.end } } }
                         }
                 };
-                children.Add(child);
+                dateSlotList.Add(dateSlot);
                 availableParkingCard.AvailableParkingCards.TryGetValue(i, out var parkingCard);
                 if (parkingCard != null)
                 {
-                    availableParkingCard.AvailableParkingCards[i].Add(child);
+                    availableParkingCard.AvailableParkingCards[i].Add(dateSlot);
                 }
                 else
                 {
-                    availableParkingCard.AvailableParkingCards.Add(i, children);
+                    availableParkingCard.AvailableParkingCards.Add(i, dateSlotList);
                 }
             }
         }

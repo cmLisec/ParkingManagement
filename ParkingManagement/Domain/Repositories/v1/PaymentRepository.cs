@@ -10,19 +10,19 @@ namespace ParkingManagement.Domain.Repositories.v1
         public PaymentRepository(ParkingManagementDBContext context) : base(context)
         {
         }
-        public async Task<BaseResponse<Payments>> AddPaymentAsync(Payments PaymentToAdded)
+        public async Task<BaseResponse<Payments>> AddPaymentAsync(Payments paymentToAdded)
         {
-            if (PaymentToAdded == null) return new BaseResponse<Payments>("", StatusCodes.Status400BadRequest);
-            Payments PaymentEntity = await GetContext().Payments.FirstOrDefaultAsync(i => i.Id == PaymentToAdded.Id).ConfigureAwait(false);
-            if (PaymentEntity != null)
+            if (paymentToAdded == null) return new BaseResponse<Payments>("", StatusCodes.Status400BadRequest);
+            Payments paymentEntity = await GetContext().Payments.FirstOrDefaultAsync(i => i.Id == paymentToAdded.Id).ConfigureAwait(false);
+            if (paymentEntity != null)
                 return new BaseResponse<Payments>("", StatusCodes.Status409Conflict);
-            PaymentToAdded.CreatedDate = DateTime.UtcNow;
-            PaymentToAdded.ModifiedDate = DateTime.UtcNow;
+            paymentToAdded.CreatedDate = DateTime.UtcNow;
+            paymentToAdded.ModifiedDate = DateTime.UtcNow;
             var expenseHistoryEntity = new ExpenseHistory()
             {
-                PayerUserId = PaymentToAdded.PayerUserId,
-                Amount = PaymentToAdded.Amount,
-                Date = PaymentToAdded.Date,
+                PayerUserId = paymentToAdded.PayerUserId,
+                Amount = paymentToAdded.Amount,
+                Date = paymentToAdded.Date,
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = DateTime.UtcNow,
             };
@@ -33,18 +33,18 @@ namespace ParkingManagement.Domain.Repositories.v1
             //    CreatedDate = DateTime.UtcNow,
             //    ModifiedDate = DateTime.UtcNow        
             //};
-            GetContext().Payments.Add(PaymentToAdded);
+            GetContext().Payments.Add(paymentToAdded);
             GetContext().ExpenseHistories.Add(expenseHistoryEntity);
             //GetContext().UserPayments.Add(userPayment);
             await CompleteAsync().ConfigureAwait(false);
-            return new BaseResponse<Payments>(PaymentToAdded);
+            return new BaseResponse<Payments>(paymentToAdded);
         }
         public async Task<BaseResponse<List<ExpenseHistory>>> GetAllExpenseAsync()
         {
-            List<ExpenseHistory> ExpenseList = await GetContext().ExpenseHistories.ToListAsync().ConfigureAwait(false);
-            if (ExpenseList.Count <= 0)
+            List<ExpenseHistory> expenseList = await GetContext().ExpenseHistories.ToListAsync().ConfigureAwait(false);
+            if (expenseList.Count <= 0)
                 return new BaseResponse<List<ExpenseHistory>>("", StatusCodes.Status204NoContent);
-            return new BaseResponse<List<ExpenseHistory>>(ExpenseList);
+            return new BaseResponse<List<ExpenseHistory>>(expenseList);
         }
         public async Task<BaseResponse<SettleUpHistory>> AddSettleUpAsync(SettleUpHistory settleUp)
         {

@@ -77,11 +77,6 @@ namespace ParkingManagement.Domain.Services.v1
                                 {
                                     availableParkingCard.AvailableParkingCards.Add(i, children);
                                 }
-
-                                //date.start = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.start.Hour, date.start.Minute, date.start.Second);
-                                //date.end = new DateTime(dateTime.Date.Year, dateTime.Date.Month, dateTime.Date.Day, date.end.Hour, date.end.Minute, date.end.Second);
-
-                                //ParkingCardUtility.DefaultParkingSlot(cardCount, availableParkingCard, date);
                             }
                         }
                     }
@@ -96,8 +91,6 @@ namespace ParkingManagement.Domain.Services.v1
             }
             return new BaseResponse<AvailableParkingCardDTO>(response.Message, response.StatusCode);
         }
-
-
 
         /// <summary>
         /// This function returns parking card based on Id

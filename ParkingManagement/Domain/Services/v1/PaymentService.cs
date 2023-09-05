@@ -19,11 +19,11 @@ namespace ParkingManagement.Domain.Services.v1
         public async Task<BaseResponse<PaymentDTO>> AddPaymentAsync(PaymentDTO payment)
         {
             if (payment == null)
-                return new BaseResponse<PaymentDTO>("", StatusCodes.Status400BadRequest);
+                return new BaseResponse<PaymentDTO>("Bad Request", StatusCodes.Status400BadRequest);
 
 
-            var UserToAdded = _mapper.Map<PaymentDTO, Payments>(payment);
-            BaseResponse<Payments> response = await _repo.AddPaymentAsync(UserToAdded).ConfigureAwait(false);
+            var paymentDetails = _mapper.Map<PaymentDTO, Payments>(payment);
+            BaseResponse<Payments> response = await _repo.AddPaymentAsync(paymentDetails).ConfigureAwait(false);
             if (response.IsSuccessStatusCode())
             {
                 PaymentDTO mappedResponse = _mapper.Map<Payments, PaymentDTO>(response.Resource);
@@ -46,8 +46,7 @@ namespace ParkingManagement.Domain.Services.v1
         public async Task<BaseResponse<SettleUpHistoryDTO>> AddSettleUpAsync(SettleUpHistoryDTO settleUp)
         {
             if (settleUp == null)
-                return new BaseResponse<SettleUpHistoryDTO>("", StatusCodes.Status400BadRequest);
-
+                return new BaseResponse<SettleUpHistoryDTO>("Bad Request", StatusCodes.Status400BadRequest);
 
             var settleUpToAdd = _mapper.Map<SettleUpHistoryDTO, SettleUpHistory>(settleUp);
             BaseResponse<SettleUpHistory> response = await _repo.AddSettleUpAsync(settleUpToAdd).ConfigureAwait(false);

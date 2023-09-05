@@ -15,6 +15,7 @@ namespace ParkingManagement.Domain.Services.v1
             _repo = repo;
             _mapper = mapper;
         }
+
         /// <summary>
         /// This fuction returns list of all card available in database
         /// </summary>
@@ -54,8 +55,7 @@ namespace ParkingManagement.Domain.Services.v1
         public async Task<BaseResponse<CardDetailsDTO>> AddCardAsync(CardDetailsDTO card)
         {
             if (card == null)
-                return new BaseResponse<CardDetailsDTO>("", StatusCodes.Status400BadRequest);
-
+                return new BaseResponse<CardDetailsDTO>("Bad Request", StatusCodes.Status400BadRequest);
 
             var cardEntity = _mapper.Map<CardDetailsDTO, CardDetails>(card);
             BaseResponse<CardDetails> response = await _repo.AddCardAsync(cardEntity).ConfigureAwait(false);
@@ -76,8 +76,7 @@ namespace ParkingManagement.Domain.Services.v1
         public async Task<BaseResponse<CardDetailsDTO>> UpdateCardAsync(int id, CardDetailsDTO card)
         {
             if (card == null)
-                return new BaseResponse<CardDetailsDTO>("", StatusCodes.Status400BadRequest);
-
+                return new BaseResponse<CardDetailsDTO>("Bad Request", StatusCodes.Status400BadRequest);
 
             var cardEntity = _mapper.Map<CardDetailsDTO, CardDetails>(card);
             if (cardEntity != null)

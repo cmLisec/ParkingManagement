@@ -17,10 +17,10 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of User</returns>
         public async Task<BaseResponse<List<User>>> GetAllUserAsync()
         {
-            List<User> UserList = await GetContext().User.ToListAsync().ConfigureAwait(false);
-            if (UserList.Count <= 0)
+            List<User> userList = await GetContext().User.ToListAsync().ConfigureAwait(false);
+            if (userList.Count <= 0)
                 return new BaseResponse<List<User>>("", StatusCodes.Status204NoContent);
-            return new BaseResponse<List<User>>(UserList);
+            return new BaseResponse<List<User>>(userList);
         }
 
         /// <summary>
@@ -30,47 +30,47 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with User</returns>
         public async Task<BaseResponse<User>> GetUserByIdAsync(int id)
         {
-            User UserEntity = await GetContext().User.SingleOrDefaultAsync(i => i.Id == id).ConfigureAwait(false);
-            if (UserEntity == null)
+            User userEntity = await GetContext().User.SingleOrDefaultAsync(i => i.Id == id).ConfigureAwait(false);
+            if (userEntity == null)
                 return new BaseResponse<User>("", StatusCodes.Status404NotFound);
-            return new BaseResponse<User>(UserEntity);
+            return new BaseResponse<User>(userEntity);
         }
 
         /// <summary>
         /// This function add new User to database
         /// </summary>
-        /// <param name="UserToAdded">Specify User</param>
+        /// <param name="userToAdded">Specify User</param>
         /// <returns>Baseresponse with User</returns>
-        public async Task<BaseResponse<User>> AddUserAsync(User UserToAdded)
+        public async Task<BaseResponse<User>> AddUserAsync(User userToAdded)
         {
-            if (UserToAdded == null) return new BaseResponse<User>("", StatusCodes.Status400BadRequest);
-            User UserEntity = await GetContext().User.FirstOrDefaultAsync(i => i.Id == UserToAdded.Id).ConfigureAwait(false);
-            if (UserEntity != null)
+            if (userToAdded == null) return new BaseResponse<User>("", StatusCodes.Status400BadRequest);
+            User userEntity = await GetContext().User.FirstOrDefaultAsync(i => i.Id == userToAdded.Id).ConfigureAwait(false);
+            if (userEntity != null)
                 return new BaseResponse<User>("", StatusCodes.Status409Conflict);
 
-            UserToAdded.CreatedDate = DateTime.Now;
-            UserToAdded.UpdatedDate = DateTime.Now;
-            GetContext().User.Add(UserToAdded);
+            userToAdded.CreatedDate = DateTime.Now;
+            userToAdded.UpdatedDate = DateTime.Now;
+            GetContext().User.Add(userToAdded);
             await CompleteAsync().ConfigureAwait(false);
-            return new BaseResponse<User>(UserToAdded);
+            return new BaseResponse<User>(userToAdded);
         }
 
         /// <summary>
         /// This function update User in database
         /// </summary>
-        /// <param name="UserToUpdate">Specif User</param>
+        /// <param name="userToUpdate">Specif User</param>
         /// <returns>Baseresponse with User</returns>
-        public async Task<BaseResponse<User>> UpdateUserAsync(User UserToUpdate)
+        public async Task<BaseResponse<User>> UpdateUserAsync(User userToUpdate)
         {
-            if (UserToUpdate == null) return new BaseResponse<User>("", StatusCodes.Status400BadRequest);
+            if (userToUpdate == null) return new BaseResponse<User>("", StatusCodes.Status400BadRequest);
 
-            User UserEntity = await GetContext().User.AsNoTracking().SingleOrDefaultAsync(i => i.Id == UserToUpdate.Id).ConfigureAwait(false);
+            User UserEntity = await GetContext().User.AsNoTracking().SingleOrDefaultAsync(i => i.Id == userToUpdate.Id).ConfigureAwait(false);
             if (UserEntity == null)
                 return new BaseResponse<User>("", StatusCodes.Status404NotFound);
 
-            GetContext().User.Update(UserToUpdate);
+            GetContext().User.Update(userToUpdate);
             await CompleteAsync().ConfigureAwait(false);
-            return new BaseResponse<User>(UserToUpdate);
+            return new BaseResponse<User>(userToUpdate);
 
         }
         /// <summary>
@@ -80,20 +80,20 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with User</returns>
         public async Task<BaseResponse<User>> DeleteUserByIdAsync(int id)
         {
-            User UserEntity = await GetContext().User.SingleOrDefaultAsync(i => i.Id == id).ConfigureAwait(false);
-            if (UserEntity == null)
+            User userEntity = await GetContext().User.SingleOrDefaultAsync(i => i.Id == id).ConfigureAwait(false);
+            if (userEntity == null)
                 return new BaseResponse<User>("", StatusCodes.Status404NotFound);
 
-            GetContext().User.Remove(UserEntity);
+            GetContext().User.Remove(userEntity);
             await CompleteAsync().ConfigureAwait(false);
-            return new BaseResponse<User>(UserEntity);
+            return new BaseResponse<User>(userEntity);
         }
 
         public User IsValidUser(string username, string password)
         {
-            User UserEntity = GetContext().User.FirstOrDefault(i => i.Email == username && i.Password == password);
-            if (UserEntity != null)
-                return UserEntity;
+            User userEntity = GetContext().User.FirstOrDefault(i => i.Email == username && i.Password == password);
+            if (userEntity != null)
+                return userEntity;
             return null;
         }
     }

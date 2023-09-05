@@ -68,31 +68,30 @@ namespace ParkingManagement.Domain.Repositories.v1
             var settlements = new List<SettleUp>();
             // Calculate the total amount paid by the current user
             decimal totalPaidByCurrentUser = currentUser.Payments.Sum(p => p.Amount);
-
-            // Calculate the total amount received by the current user from others
-            decimal totalReceivedByCurrentUser = GetContext().SettleUpHistories
-                .Where(t => t.ReceiverUserId == userId)
-                .Sum(t => t.Amount);
-
-            // Calculate the net amount that the current user owes or is owed
-            decimal netBalance = totalReceivedByCurrentUser - totalPaidByCurrentUser;
-
             // Calculate the amount to be divided equally among other users
-            decimal amountToDivide = netBalance / (users.Count);
+            decimal amountToDivide = totalPaidByCurrentUser / (users.Count);
 
             foreach (var user in users)
             {
                 if (user.Id != userId)
                 {
-                    decimal totalReceivedByUser = transactions.Where(t => t.ReceiverUserId == user.Id)
+                    decimal payedByUser = user.Payments.Sum(i => i.Amount);
+                    decimal amountUserShouldGet = payedByUser/ (users.Count);
+                    decimal currentUserPaid = transactions.Where(t => t.PayerUserId == currentUser.Id && t.ReceiverUserId == user.Id)
                                                               .Sum(t => t.Amount);
-                    decimal netBalanceForUser = totalReceivedByUser - user.Payments.Sum(p => p.Amount);
+                    decimal balanceCurrentUserShouldPay = amountUserShouldGet - currentUserPaid;
 
-                    // Calculate the amount to be divided equally among other users
-                    decimal amountToDivideForUser = netBalanceForUser / (users.Count);
-                    // Calculate the balance for each user
-                    decimal balance = amountToDivide - amountToDivideForUser;
+                    decimal balance = 0;
+                    decimal totalReceivedByUser = transactions.Where(t => t.PayerUserId == user.Id && t.ReceiverUserId == currentUser.Id)
+                                                              .Sum(t => t.Amount);
 
+                    decimal paidAmount = amountToDivide - totalReceivedByUser;
+                    if (paidAmount > 0)
+                    {
+                        if(balanceCurrentUserShouldPay > 0)
+                            balance = balanceCurrentUserShouldPay - (amountToDivide - totalReceivedByUser);
+                        balance = amountToDivide - totalReceivedByUser;
+                    }
                     settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
                 }
             }

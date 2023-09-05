@@ -120,7 +120,8 @@ namespace ParkingManagement.Domain.Repositories.v1
                             Amount = payment.Amount,
                             Date = payment.Date,
                             IsPayment = true,
-                            PayedBy = null
+                            PayedBy = null,
+                            PayedTo = null
                         });
                     }
                 }
@@ -128,12 +129,13 @@ namespace ParkingManagement.Domain.Repositories.v1
             }
 
             var receivedByCurrentUser = GetContext().SettleUpHistories
-                .Where(t => t.ReceiverUserId == userId).ToList();
+                .Where(t => t.PayerUserId == userId).ToList();
             if (receivedByCurrentUser != null)
             {
                 foreach (var payment in receivedByCurrentUser)
                 {
                     var payedUser = users.FirstOrDefault(u => u.Id.Equals(payment.PayerUserId));
+                    var recievedUser = users.FirstOrDefault(u => u.Id.Equals(payment.ReceiverUserId));
                     if (payedUser != null)
                     {
                         transactions.Add(new TransactionDTO()
@@ -141,7 +143,8 @@ namespace ParkingManagement.Domain.Repositories.v1
                             Amount = payment.Amount,
                             Date = payment.CreatedDate,
                             IsPayment = false,
-                            PayedBy = payedUser.Name
+                            PayedBy = payedUser.Name,
+                            PayedTo = recievedUser.Name
                         });
                     }
                 }

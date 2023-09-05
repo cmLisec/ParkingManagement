@@ -6,5 +6,6 @@
         public DateTime Date { get; set; }
         public bool IsPayment { get; set; }
         public string PayedBy { get; set; }
+        public string PayedTo { get; set; }
     }
 }

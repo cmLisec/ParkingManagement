@@ -101,25 +101,27 @@ namespace ParkingManagement.Domain.Repositories.v1
                     decimal amountUserShouldGet = payedByUser / (users.Count);
                     decimal currentUserPaid = transactions.Where(t => t.PayerUserId == currentUser.Id && t.ReceiverUserId == user.Id)
                                                               .Sum(t => t.Amount);
-                    decimal balanceCurrentUserShouldPay = amountUserShouldGet - currentUserPaid;
+                    decimal balanceCurrentUserShouldPay = amountToDivide - (amountUserShouldGet - currentUserPaid);
 
-                    decimal balance = 0;
+
+
+                    //decimal balance = 0;
                     //decimal totalReceivedByUser = transactions.Where(t => t.PayerUserId == user.Id && t.ReceiverUserId == currentUser.Id)
                     //                                          .Sum(t => t.Amount);
 
-                    decimal paidAmount = amountToDivide - currentUserPaid;
-                    if (paidAmount > 0)
-                    {
-                        if (balanceCurrentUserShouldPay > 0)
-                        {
-                            balance = balanceCurrentUserShouldPay - (amountToDivide - currentUserPaid);
-                        }
-                        else
-                        {
-                            balance = amountToDivide - currentUserPaid;
-                        }
-                    }
-                    settlements.Add(new SettleUp { User = user, AmountToSettle = balance });
+                    //decimal paidAmount = amountToDivide - currentUserPaid;
+                    //if (paidAmount > 0)
+                    //{
+                    //    if (balanceCurrentUserShouldPay > 0)
+                    //    {
+                    //        balance = balanceCurrentUserShouldPay - (amountToDivide - currentUserPaid);
+                    //    }
+                    //    else
+                    //    {
+                    //        balance = amountToDivide - currentUserPaid;
+                    //    }
+                    //}
+                    settlements.Add(new SettleUp { User = user, AmountToSettle = balanceCurrentUserShouldPay });
                 }
             }
             return new BaseResponse<List<SettleUp>>(settlements);

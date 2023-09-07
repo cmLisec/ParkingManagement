@@ -82,19 +82,19 @@ namespace ParkingManagement.Domain.Repositories.v1
                     decimal balanceCurrentUserShouldPay = amountUserShouldGet - currentUserPaid;
 
                     decimal balance = 0;
-                    decimal totalReceivedByUser = transactions.Where(t => t.PayerUserId == user.Id && t.ReceiverUserId == currentUser.Id)
-                                                              .Sum(t => t.Amount);
+                    //decimal totalReceivedByUser = transactions.Where(t => t.PayerUserId == user.Id && t.ReceiverUserId == currentUser.Id)
+                    //                                          .Sum(t => t.Amount);
 
-                    decimal paidAmount = amountToDivide - totalReceivedByUser;
+                    decimal paidAmount = amountToDivide - currentUserPaid;
                     if (paidAmount > 0)
                     {
                         if (balanceCurrentUserShouldPay > 0)
                         {
-                            balance = balanceCurrentUserShouldPay - (amountToDivide - totalReceivedByUser);
+                            balance = balanceCurrentUserShouldPay - (amountToDivide - currentUserPaid);
                         }
                         else
                         {
-                            balance = amountToDivide - totalReceivedByUser;
+                            balance = amountToDivide - currentUserPaid;
                         }
                     }
                     settlements.Add(new SettleUp { User = user, AmountToSettle = balance });

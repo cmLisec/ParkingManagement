@@ -16,6 +16,11 @@ namespace ParkingManagement.Domain.Services.v1
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// This function adds paymnet
+        /// </summary>
+        /// <param name="payment">Specify payment</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<PaymentDTO>> AddPaymentAsync(PaymentDTO payment)
         {
             if (payment == null)
@@ -32,6 +37,11 @@ namespace ParkingManagement.Domain.Services.v1
             return new BaseResponse<PaymentDTO>(response.Message, response.StatusCode);
 
         }
+
+        /// <summary>
+        /// This function get all expenses
+        /// </summary>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<List<ExpenseHistoryDTO>>> GetAllExpenseAsync()
         {
             BaseResponse<List<ExpenseHistory>> response = await _repo.GetAllExpenseAsync().ConfigureAwait(false);
@@ -43,6 +53,11 @@ namespace ParkingManagement.Domain.Services.v1
             return new BaseResponse<List<ExpenseHistoryDTO>>(response.Message, response.StatusCode);
         }
 
+        /// <summary>
+        /// This function adds settle up
+        /// </summary>
+        /// <param name="settleUp">Specify settleup</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<SettleUpHistoryDTO>> AddSettleUpAsync(SettleUpHistoryDTO settleUp)
         {
             if (settleUp == null)
@@ -59,6 +74,11 @@ namespace ParkingManagement.Domain.Services.v1
 
         }
 
+        /// <summary>
+        /// This function gets settle up details
+        /// </summary>
+        /// <param name="userId">Sepecify user id</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<List<SettleUpDTO>>> GetSettleUpDetailsAsync(int userId)
         {
             BaseResponse<List<SettleUp>> response = await _repo.GetSettleUpDetailsAsync(userId).ConfigureAwait(false);
@@ -70,6 +90,11 @@ namespace ParkingManagement.Domain.Services.v1
             return new BaseResponse<List<SettleUpDTO>>(response.Message, response.StatusCode);
         }
 
+        /// <summary>
+        /// This function gets transaction details
+        /// </summary>
+        /// <param name="userId">Sepecify user id</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<List<TransactionDTO>>> GetTransactionDetailsAsync(int userId)
         {
             return await _repo.GetTransactionDetailsAsync(userId).ConfigureAwait(false);

@@ -16,7 +16,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetAvailableParkingCardAsync(DateTime startDate, DateTime endDate)
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date && x.StartDate.Date <= endDate.Date).OrderBy(x => x.CardId).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Where(x => x.StartDate >= startDate.Date && x.StartDate.Date <= endDate.Date).OrderBy(x => x.CardId).ThenBy(x => x.StartDate).ToListAsync().ConfigureAwait(false);
             foreach (var data in parkingCard)
             {
                 data.StartDate = Convert.ToDateTime(data.StartDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));
@@ -46,7 +46,7 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <returns>Baseresponse with list of parking card</returns>
         public async Task<BaseResponse<List<ParkingCard>>> GetBookedParkingCardHistoryForUser(int userId)
         {
-            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.UserId == userId).ToListAsync().ConfigureAwait(false);
+            List<ParkingCard> parkingCard = await GetContext().ParkingCard.Include(x => x.User).Where(x => x.UserId == userId && x.StartDate.Date >= DateTime.Now.Date).OrderBy(x => x.StartDate).ToListAsync().ConfigureAwait(false);
             foreach (var data in parkingCard)
             {
                 data.StartDate = Convert.ToDateTime(data.StartDate.ToUniversalTime().ToString("yyyy/MM/dd H:mm:ss"));

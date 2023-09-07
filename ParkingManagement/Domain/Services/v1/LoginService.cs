@@ -15,6 +15,12 @@ namespace ParkingManagement.Domain.Services.v1
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Checks for valid user
+        /// </summary>
+        /// <param name="username">Specify username</param>
+        /// <param name="password">Speciy password</param>
+        /// <returns>UserDto</returns>
         public UserDto IsValidUser(string username, string password)
         {
             User response = _repo.IsValidUser(username, password);

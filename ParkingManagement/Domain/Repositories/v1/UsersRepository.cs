@@ -13,7 +13,6 @@ namespace ParkingManagement.Domain.Repositories.v1
         /// <summary>
         /// This function fetch all Countries available from database.
         /// </summary>
-        /// <param name="query">Specify Query Parameter</param>
         /// <returns>Baseresponse with list of User</returns>
         public async Task<BaseResponse<List<User>>> GetAllUserAsync()
         {
@@ -89,6 +88,12 @@ namespace ParkingManagement.Domain.Repositories.v1
             return new BaseResponse<User>(userEntity);
         }
 
+        /// <summary>
+        /// Checks for valid user
+        /// </summary>
+        /// <param name="username">Specify username</param>
+        /// <param name="password">Speciy password</param>
+        /// <returns>User</returns>
         public User IsValidUser(string username, string password)
         {
             User userEntity = GetContext().User.FirstOrDefault(i => i.Email == username && i.Password == password);

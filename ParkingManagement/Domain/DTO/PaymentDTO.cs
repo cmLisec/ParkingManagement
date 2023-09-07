@@ -1,7 +1,4 @@
-﻿using ParkingManagement.Domain.Models;
-using System.Diagnostics.CodeAnalysis;
-
-namespace ParkingManagement.Domain.DTO
+﻿namespace ParkingManagement.Domain.DTO
 {
     public class PaymentDTO
     {

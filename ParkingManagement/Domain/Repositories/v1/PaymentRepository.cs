@@ -10,6 +10,12 @@ namespace ParkingManagement.Domain.Repositories.v1
         public PaymentRepository(ParkingManagementDBContext context) : base(context)
         {
         }
+
+        /// <summary>
+        /// This function adds paymnet
+        /// </summary>
+        /// <param name="paymentToAdded">Specify payment</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<Payments>> AddPaymentAsync(Payments paymentToAdded)
         {
             if (paymentToAdded == null) return new BaseResponse<Payments>("", StatusCodes.Status400BadRequest);
@@ -39,6 +45,11 @@ namespace ParkingManagement.Domain.Repositories.v1
             await CompleteAsync().ConfigureAwait(false);
             return new BaseResponse<Payments>(paymentToAdded);
         }
+
+        /// <summary>
+        /// This function get all expenses
+        /// </summary>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<List<ExpenseHistory>>> GetAllExpenseAsync()
         {
             List<ExpenseHistory> expenseList = await GetContext().ExpenseHistories.ToListAsync().ConfigureAwait(false);
@@ -46,6 +57,12 @@ namespace ParkingManagement.Domain.Repositories.v1
                 return new BaseResponse<List<ExpenseHistory>>("", StatusCodes.Status204NoContent);
             return new BaseResponse<List<ExpenseHistory>>(expenseList);
         }
+
+        /// <summary>
+        /// This function adds settle up
+        /// </summary>
+        /// <param name="settleUp">Specify settleup</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<SettleUpHistory>> AddSettleUpAsync(SettleUpHistory settleUp)
         {
             if (settleUp == null) return new BaseResponse<SettleUpHistory>("", StatusCodes.Status400BadRequest);
@@ -60,6 +77,11 @@ namespace ParkingManagement.Domain.Repositories.v1
             return new BaseResponse<SettleUpHistory>(settleUp);
         }
 
+        /// <summary>
+        /// This function gets settle up details
+        /// </summary>
+        /// <param name="userId">Sepecify user id</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<List<SettleUp>>> GetSettleUpDetailsAsync(int userId)
         {
             var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
@@ -102,6 +124,12 @@ namespace ParkingManagement.Domain.Repositories.v1
             }
             return new BaseResponse<List<SettleUp>>(settlements);
         }
+
+        /// <summary>
+        /// This function gets transaction details
+        /// </summary>
+        /// <param name="userId">Sepecify user id</param>
+        /// <returns>BaseResponse</returns>
         public async Task<BaseResponse<List<TransactionDTO>>> GetTransactionDetailsAsync(int userId)
         {
             var currentUser = GetContext().User.Include(u => u.Payments).FirstOrDefault(u => u.Id == userId);
@@ -150,7 +178,7 @@ namespace ParkingManagement.Domain.Repositories.v1
                 }
             }
             if (!transactions.Any())
-                return new BaseResponse<List<TransactionDTO>>("no transaction history", StatusCodes.Status204NoContent);
+                return new BaseResponse<List<TransactionDTO>>("No transaction history", StatusCodes.Status204NoContent);
             return new BaseResponse<List<TransactionDTO>>(transactions);
         }
     }

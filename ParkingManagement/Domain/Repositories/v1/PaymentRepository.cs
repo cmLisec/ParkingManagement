@@ -76,7 +76,7 @@ namespace ParkingManagement.Domain.Repositories.v1
                 if (user.Id != userId)
                 {
                     decimal payedByUser = user.Payments.Sum(i => i.Amount);
-                    decimal amountUserShouldGet = payedByUser/ (users.Count);
+                    decimal amountUserShouldGet = payedByUser / (users.Count);
                     decimal currentUserPaid = transactions.Where(t => t.PayerUserId == currentUser.Id && t.ReceiverUserId == user.Id)
                                                               .Sum(t => t.Amount);
                     decimal balanceCurrentUserShouldPay = amountUserShouldGet - currentUserPaid;
